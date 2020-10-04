@@ -25,7 +25,7 @@ async function getVariableFile(city, role) {
                     },
                     {
                         n: "Zé Ferreira",
-                        e: "N",
+                        e: "S",
                         vap: 1788,
                     },
                 ],

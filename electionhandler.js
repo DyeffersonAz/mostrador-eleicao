@@ -113,22 +113,25 @@ function parseDataObject(data) {
 }
 
 async function updateLoop() {
-    while (true) {
-        setInterval(() => {
-            for (let c of cities) {
-                let currCityMayor = parseDataObject(
-                    getVariableFile(c, "prefeito")
+
+    // TODO: Maybe take off this await thing and use "then" instead.
+
+    window.setInterval(() => {
+        for (let c of cities) {
+            let currCityMayor = await getVariableFile(c, "prefeito");
+            currCityMayor = parseDataObject(currCityMayor);
+            let currCityCouncillor = await getVariableFile(c, "vereador");
+            currCityCouncillor = parseDataObject(currCityCouncillor);
+
+            if (
+                currCityMayor.candidates.find((o) => o.e) ||
+                currCityCouncillor.candidates.find((o) => o.e)
+            ) {
+                notify(
+                    `Eleição em ${currCityMayor.cl}!`,
+                    "Verifique no painel!"
                 );
-                let currCityCouncillor = parseDataObject(
-                    getVariableFile(c, "vereador")
-                );
-                if (
-                    currCityMayor.candidates.find((o) => o.e) ||
-                    currCityCouncillor.candidates.find((o) => o.e)
-                ) {
-                    notify(`Eleição em ${currCityMayor.cl}!`, "Verifique no painel!");
-                }
             }
-        }, 4615);
-    }
+        }
+    }, 3000);
 }

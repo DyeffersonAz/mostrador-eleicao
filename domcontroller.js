@@ -45,10 +45,8 @@ cities.forEach((city) => {
     cityDOM.appendChild(currCityOption);
 });
 
-Notification.requestPermission().then(r => {
-    updateLoop();
-});
-
 let variableFile = getVariableFile(getCity(), getRole()).then((response) => {
     plotVotesPerCandidate(parseDataObject(response));
 });
+
+updateLoop()
