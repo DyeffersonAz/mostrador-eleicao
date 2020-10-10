@@ -1,3 +1,4 @@
 testvariable.json
 municipios_brasileiros_tse.json
 test-database
+node_modules/*
