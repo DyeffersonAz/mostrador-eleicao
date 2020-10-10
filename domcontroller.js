@@ -28,13 +28,10 @@ function getRole() {
     return roleDOM.selectedOptions[0].value;
 }
 
-function changedForm() {
-    console.log(`FORMULÁRIO MUDOU!`);
-    let variableFile = getVariableFile(getCity(), getRole()).then(
-        (response) => {
-            plotVotesPerCandidate(parseDataObject(response));
-        }
-    );
+async function changedForm() {
+    let varfile = await getVariableFile(getCity(), getRole());
+    plotVotesPerCandidate(parseDataObject(varfile));
+    plotUrnasApuradas(parseDataObject(varfile))
 }
 
 // On page load ====
@@ -45,8 +42,4 @@ cities.forEach((city) => {
     cityDOM.appendChild(currCityOption);
 });
 
-let variableFile = getVariableFile(getCity(), getRole()).then((response) => {
-    plotVotesPerCandidate(parseDataObject(response));
-});
-
-updateLoop()
+changedForm();

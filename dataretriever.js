@@ -1,33 +1,35 @@
 async function getVariableFile(city, role) {
-    // NO AGUARDO DO TSE
-    await getCityCode(city).then((response) => {
-        getCityUF(city).then((response) => {
-            let uf = response;
-        });
-        city = response;
-    });
-    console.log(city);
-    console.log(role);
-
+    // IR AO TSE
+    let cityCode = await getCityCode(city);
     return {
-        carper: roleStringToRoleCode(role),
+        carper: `${roleStringToRoleCode(role)}`,
         dg: "02/10/2020",
         hg: "14:30:10",
         abr: [
             {
-                cdabr: parseInt(city),
-                psa: "90%",
+                cdabr: `${cityCode}`,
+                psa: "75,878%",
                 cand: [
                     {
                         n: "Zé Moreira",
                         e: "N",
-                        vap: 1522,
+                        vap: 150,
                     },
                     {
                         n: "Zé Ferreira",
-                        e: "S",
-                        vap: 1788,
+                        e: "N",
+                        vap: 200,
                     },
+                    {
+                        n: "José Cavalo",
+                        e: "N",
+                        vap: 300
+                    },
+                    {
+                        n: "Fábio Mula",
+                        e: "N",
+                        vap: 258
+                    }
                 ],
             },
         ],
@@ -39,22 +41,45 @@ function getCandidateByNumber(number) {
 }
 
 async function getCityCode(city) {
-    let rawURL = await fetch(
+    // pegar a porcaria do json com os codigos e depois procurar uma cidade que tenha o mesmo nome e o código tse dela...
+
+    //https://raw.githubusercontent.com/betafcc/Municipios-Brasileiros-TSE/master/municipios_brasileiros_tse.json
+
+    let codesDB = await fetch(
         "https://raw.githubusercontent.com/betafcc/Municipios-Brasileiros-TSE/master/municipios_brasileiros_tse.json"
     );
-    let data = await rawURL.json();
+    let codesDBJSON = await codesDB.json();
+    let DBCity = codesDBJSON.filter(
+        (elt) => elt.nome_municipio == city.toUpperCase()
+    )[0];
+    let cityCode = DBCity.codigo_tse;
 
-    return data.find((o) => o.nome_municipio == String(city).toUpperCase())
-        .codigo_tse;
+    return cityCode;
+}
+
+async function getCityByCode(cityCode) {
+    let codesDB = await fetch(
+        "https://raw.githubusercontent.com/betafcc/Municipios-Brasileiros-TSE/master/municipios_brasileiros_tse.json"
+    );
+    let codesDBJSON = await codesDB.json();
+    let DBCity = codesDBJSON.filter(
+        (elt) => elt.codigo_tse == cityCode
+    )[0];
+    let cityName = DBCity.nome_municipio;
+
+    return cityName;
 }
 
 async function getCityUF(city) {
-    let rawURL = await fetch(
+    return fetch(
         "https://raw.githubusercontent.com/betafcc/Municipios-Brasileiros-TSE/master/municipios_brasileiros_tse.json"
-    );
-    let data = await rawURL.json();
-
-    return data.find((o) => o.nome_municipio == String(city).toUpperCase()).uf;
+    )
+        .then((raw) => raw.json())
+        .then(
+            (resp) =>
+                data.find((o) => o.nome_municipio == String(city).toUpperCase())
+                    .uf
+        );
 }
 
 function roleCodeToRoleString(roleCode) {

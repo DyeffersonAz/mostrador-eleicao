@@ -11,7 +11,7 @@ function generateColors(qnt) {
     return colors;
 }
 
-function plotVotesPerCandidate(data) {
+async function plotVotesPerCandidate(data) {
     console.log(data);
     if (document.getElementById("votesPerCandidate")) {
         document.getElementById("votesPerCandidate").remove();
@@ -36,6 +36,8 @@ function plotVotesPerCandidate(data) {
         );
     }
 
+    let cityName = await getCityByCode(data.cl);
+
     let graph = new Chart(document.getElementById("votesPerCandidate"), {
         type: "pie",
         data: {
@@ -55,10 +57,65 @@ function plotVotesPerCandidate(data) {
                 display: true,
                 text: `Apuração de ${data.cl} para ${data.role}`,
             },
+            tooltips: {
+                callbacks: {
+                    label: function (tooltipItem, data) {
+                        let label = data.datasets[0].data[tooltipItem.index];
+
+                        label += " votos";
+                        return label;
+                    },
+                },
+            },
         },
     });
 
-    graph.options.title.text = `Apuração de ${data.cl} para ${data.role}`;
+    graph.options.title.text = `Apuração de ${cityName} para ${data.role}`;
+}
+
+function plotUrnasApuradas(data) {
+    console.log(data);
+    if (document.getElementById("urnasApuradas")) {
+        document.getElementById("urnasApuradas").remove();
+    }
+    let myCanvas = document.createElement("canvas");
+    myCanvas.id = "urnasApuradas";
+
+    document.body.appendChild(myCanvas);
+
+    let urnasApuradas = parseFloat(data.as.replace(",", ".").slice(0, -1));
+
+    let graph = new Chart(document.getElementById("urnasApuradas"), {
+        type: "pie",
+        data: {
+            datasets: [
+                {
+                    data: [urnasApuradas, 100 - urnasApuradas],
+                    backgroundColor: ["#00b31b", "#e61e1e"],
+                },
+            ],
+
+            labels: ["Aputadas", "Não apuradas"],
+        },
+        options: {
+            title: {
+                display: true,
+                text: `Urnas Apuradas`,
+            },
+            tooltips: {
+                callbacks: {
+                    label: function (tooltipItem, data) {
+                        let label = data.datasets[0].data[tooltipItem.index];
+
+                        label += "%";
+                        return label;
+                    },
+                },
+            },
+        },
+    });
+
+    graph.options.title.text = `Urnas Apuradas`;
 }
 
 function parseDataObject(data) {
@@ -110,28 +167,4 @@ function parseDataObject(data) {
                     "votes": <numero de votos>
         }
     */
-}
-
-async function updateLoop() {
-
-    // TODO: Maybe take off this await thing and use "then" instead.
-
-    window.setInterval(() => {
-        for (let c of cities) {
-            let currCityMayor = await getVariableFile(c, "prefeito");
-            currCityMayor = parseDataObject(currCityMayor);
-            let currCityCouncillor = await getVariableFile(c, "vereador");
-            currCityCouncillor = parseDataObject(currCityCouncillor);
-
-            if (
-                currCityMayor.candidates.find((o) => o.e) ||
-                currCityCouncillor.candidates.find((o) => o.e)
-            ) {
-                notify(
-                    `Eleição em ${currCityMayor.cl}!`,
-                    "Verifique no painel!"
-                );
-            }
-        }
-    }, 3000);
 }
