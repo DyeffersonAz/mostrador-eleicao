@@ -23,13 +23,13 @@ async function getVariableFile(city, role) {
                     {
                         n: "José Cavalo",
                         e: "N",
-                        vap: 300
+                        vap: 300,
                     },
                     {
                         n: "Fábio Mula",
                         e: "N",
-                        vap: 258
-                    }
+                        vap: 258,
+                    },
                 ],
             },
         ],
@@ -62,9 +62,7 @@ async function getCityByCode(cityCode) {
         "https://raw.githubusercontent.com/betafcc/Municipios-Brasileiros-TSE/master/municipios_brasileiros_tse.json"
     );
     let codesDBJSON = await codesDB.json();
-    let DBCity = codesDBJSON.filter(
-        (elt) => elt.codigo_tse == cityCode
-    )[0];
+    let DBCity = codesDBJSON.filter((elt) => elt.codigo_tse == cityCode)[0];
     let cityName = DBCity.nome_municipio;
 
     return cityName;

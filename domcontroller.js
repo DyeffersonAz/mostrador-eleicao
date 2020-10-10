@@ -31,7 +31,7 @@ function getRole() {
 async function changedForm() {
     let varfile = await getVariableFile(getCity(), getRole());
     plotVotesPerCandidate(parseDataObject(varfile));
-    plotUrnasApuradas(parseDataObject(varfile))
+    plotUrnasApuradas(parseDataObject(varfile));
 }
 
 // On page load ====
