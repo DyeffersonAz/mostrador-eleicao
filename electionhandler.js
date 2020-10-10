@@ -62,7 +62,7 @@ async function plotVotesPerCandidate(data) {
                     label: function (tooltipItem, data) {
                         let label = data.datasets[0].data[tooltipItem.index];
 
-                        label += " votos";
+                        label = `${numbers[tooltipItem.index]}: ${label} votos`
                         return label;
                     },
                 },
