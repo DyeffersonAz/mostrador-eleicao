@@ -22,6 +22,9 @@
   },
   "homepage": "https://github.com/DyeffersonAz/mostrador-eleicao#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "http": "0.0.1-security",
+    "request": "^2.88.2",
+    "socket.io": "^2.3.0"
   }
 }

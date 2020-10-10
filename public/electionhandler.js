@@ -19,7 +19,7 @@ async function plotVotesPerCandidate(data) {
     let myCanvas = document.createElement("canvas");
     myCanvas.id = "votesPerCandidate";
 
-    document.body.appendChild(myCanvas);
+    document.querySelector("#graphs").appendChild(myCanvas);
 
     let votesArray = [];
     let numbers = [];
@@ -68,6 +68,7 @@ async function plotVotesPerCandidate(data) {
                 },
             },
         },
+        maintainAspectRatio: false,
     });
 
     graph.options.title.text = `Apuração de ${cityName} para ${data.role}`;
@@ -81,7 +82,7 @@ function plotUrnasApuradas(data) {
     let myCanvas = document.createElement("canvas");
     myCanvas.id = "urnasApuradas";
 
-    document.body.appendChild(myCanvas);
+    document.querySelector("#graphs").appendChild(myCanvas);
 
     let urnasApuradas = parseFloat(data.as.replace(",", ".").slice(0, -1));
 
@@ -95,7 +96,7 @@ function plotUrnasApuradas(data) {
                 },
             ],
 
-            labels: ["Aputadas", "Não apuradas"],
+            labels: ["Apuradas", "Não apuradas"],
         },
         options: {
             title: {
@@ -113,9 +114,57 @@ function plotUrnasApuradas(data) {
                 },
             },
         },
+        maintainAspectRatio: false,
     });
 
     graph.options.title.text = `Urnas Apuradas`;
+}
+
+function generateTable(data) {
+    if (document.querySelector("table")) {
+        document.querySelector("table").remove();
+    }
+
+    let table = document.createElement("table");
+    table.className = "table-responsive";
+    let headerRow = document.createElement("tr");
+    table.appendChild(headerRow); // Creating the row that has headers
+
+    // ==> Appending headers
+    let candidateName = document.createElement("th");
+    candidateName.textContent = "Candidato";
+    headerRow.appendChild(candidateName);
+
+    let votes = document.createElement("th");
+    votes.textContent = "# de votos";
+    headerRow.appendChild(votes);
+
+    let elected = document.createElement("th");
+    elected.textContent = "Eleito?";
+    headerRow.appendChild(elected);
+
+    // ==> Creating the actual rows
+    Object.getOwnPropertyNames(data.candidates).forEach((candidate) => {
+        candidate = data.candidates[candidate];
+        let row = document.createElement("tr");
+        table.appendChild(row);
+
+        let currCandidateName = document.createElement("td");
+        currCandidateName.textContent = candidate.number;
+        row.appendChild(currCandidateName);
+
+        let currCandidateVotes = document.createElement("td");
+        currCandidateVotes.textContent = candidate.votes;
+        row.appendChild(currCandidateVotes);
+        table.appendChild(row);
+
+        let isCurrCandidateElected = document.createElement("td");
+        isCurrCandidateElected.textContent = candidate.elected ? "Sim" : "Não";
+        row.appendChild(isCurrCandidateElected);
+        table.appendChild(row);
+    });
+
+    document.querySelector("#graphs").appendChild(table);
 }
 
 function parseDataObject(data) {
