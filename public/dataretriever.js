@@ -57,10 +57,9 @@ function getPartyByNumber(number, fixedFile) {
     let coligacoes = fixedFile.carg.col;
     for (let col of coligacoes) {
         for (let par of col.par) {
-            let party = par
             for (let cand of par.cand) {
                 if (cand.n == number) {
-                    return party.sg;
+                    return par.sg;
                 }
             }
         }
