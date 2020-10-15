@@ -31,40 +31,80 @@ async function plotVotesPerCandidate(data) {
     }
 
     let cityName = await getCityByCode(data.cl);
+    if (names.length <= 7) {
+        let graph = new Chart(document.getElementById("votesPerCandidate"), {
+            type: "pie",
+            data: {
+                datasets: [
+                    {
+                        data: votesArray,
+                        backgroundColor: generateColors(
+                            Object.keys(data.candidates).length
+                        ),
+                    },
+                ],
 
-    let graph = new Chart(document.getElementById("votesPerCandidate"), {
-        type: "pie",
-        data: {
-            datasets: [
-                {
-                    data: votesArray,
-                    backgroundColor: generateColors(
-                        Object.keys(data.candidates).length
-                    ),
-                },
-            ],
-
-            labels: names,
-        },
-        options: {
-            title: {
-                display: true,
-                text: `Apuração de ${data.cl} para ${data.role}`,
+                labels: names,
             },
-            tooltips: {
-                callbacks: {
-                    label: function (tooltipItem, data) {
-                        let label = data.datasets[0].data[tooltipItem.index];
+            options: {
+                title: {
+                    display: true,
+                    text: `Apuração de ${data.cl} para ${data.role}`,
+                },
+                tooltips: {
+                    callbacks: {
+                        label: function (tooltipItem, data) {
+                            let label =
+                                data.datasets[0].data[tooltipItem.index];
 
-                        label = `${names[tooltipItem.index]}: ${label} votos`;
-                        return label;
+                            label = `${
+                                names[tooltipItem.index]
+                            }: ${label} votos`;
+                            return label;
+                        },
                     },
                 },
             },
-        },
-        maintainAspectRatio: false,
-    });
+        });
+    } else if (names.length > 7) {
+        let graph = new Chart(document.getElementById("votesPerCandidate"), {
+            type: "bar",
+            data: {
+                datasets: [
+                    {
+                        data: votesArray,
+                        backgroundColor: generateColors(
+                            Object.keys(data.candidates).length
+                        ),
+                    },
+                ],
 
+                labels: names,
+            },
+            options: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: `Apuração de ${data.cl} para ${data.role}`,
+                },
+                tooltips: {
+                    callbacks: {
+                        label: function (tooltipItem, data) {
+                            let label =
+                                data.datasets[0].data[tooltipItem.index];
+
+                            label = `${
+                                names[tooltipItem.index]
+                            }: ${label} votos`;
+                            return label;
+                        },
+                    },
+                },
+            },
+        });
+    }
     graph.options.title.text = `Apuração de ${cityName} para ${data.role}`;
 }
 
@@ -108,7 +148,6 @@ function plotUrnasApuradas(data) {
                 },
             },
         },
-        maintainAspectRatio: false,
     });
 
     graph.options.title.text = `Urnas Apuradas`;
@@ -188,7 +227,10 @@ async function parseDataObject(data) {
     data.abr[0].cand.forEach((candidate) => {
         obj.candidates.push({});
         obj.candidates[obj.candidates.length - 1].number = String(candidate.n);
-        obj.candidates[obj.candidates.length - 1].name = getCandidateByNumber(String(candidate.n), obj.dadosFixos);
+        obj.candidates[obj.candidates.length - 1].name = getCandidateByNumber(
+            String(candidate.n),
+            obj.dadosFixos
+        );
         // VOTOS .......
         if (String(candidate.e) == "S") {
             obj.candidates[obj.candidates.length - 1].elected = true;
