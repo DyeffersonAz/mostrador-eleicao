@@ -3,7 +3,7 @@
 }
 table {
     margin: auto;
-    grid-column: 3;
+    grid-column: 2;
     grid-row-start: 1;
     grid-row-end: 30;
     text-align: center;
@@ -36,9 +36,9 @@ canvas#votesPerCandidate {
     max-width: 600px;
     max-height: 500px;
     grid-row-start: 1;
-    grid-row-end: 2;
+    grid-row-end: 1;
     grid-column-start: 1;
-    grid-column-end: 3;
+    grid-column-end: 1;
 }
 
 canvas#urnasApuradas {
@@ -47,8 +47,8 @@ canvas#urnasApuradas {
     min-height: 100px;
     max-width: 400px;
     max-height: 300px;
-    grid-row-start: 3;
-    grid-row-end: 4;
+    grid-row-start: 2;
+    grid-row-end: 2;
     grid-column-start: 1;
     grid-column-end: 1;
 }
