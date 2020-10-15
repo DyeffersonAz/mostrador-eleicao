@@ -1,7 +1,15 @@
 async function getVariableFile(city, role) {
     // IR AO TSE
     let cityCode = await getCityCode(city);
-    
+    const roleCode = String(roleStringToRoleCode(role)).padStart(4, "0");
+    const host = "../exemplos";
+    const ciclo = "ele2020";
+    const ambiente = "simulado";
+    const codigo_eleicao = "8707";
+    const uf = await getCityUF(city);
+    const filepath = `${host}/${ciclo}/divulgacao/${ambiente}/${codigo_eleicao}/dados/${uf}/${uf}${cityCode}-c${roleCode}-e${codigo_eleicao}-v.json`;
+    let raw_file = await fetch(filepath, { mode: "no-cors" });
+    let json_file = await raw_file.json();
 }
 
 function getCandidateByNumber(number) {
@@ -37,15 +45,14 @@ async function getCityByCode(cityCode) {
 }
 
 async function getCityUF(city) {
-    return fetch(
+    let raw_data = await fetch(
         "https://raw.githubusercontent.com/betafcc/Municipios-Brasileiros-TSE/master/municipios_brasileiros_tse.json"
-    )
-        .then((raw) => raw.json())
-        .then(
-            (resp) =>
-                data.find((o) => o.nome_municipio == String(city).toUpperCase())
-                    .uf
-        );
+    );
+    let json_data = await raw_data.json();
+    let municipio = json_data.filter(
+        (o) => o.nome_municipio == String(city).toUpperCase()
+    )[0];
+    return municipio.uf.toLowerCase();
 }
 
 function roleCodeToRoleString(roleCode) {

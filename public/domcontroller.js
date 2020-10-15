@@ -17,7 +17,7 @@ const cities = [
 
 const cityDOM = document.querySelector("#city");
 const roleDOM = document.querySelector("#role");
-const socket = io("http://localhost:3000");
+//const socket = io("http://localhost:3000");
 
 // Functions ====
 
@@ -46,8 +46,8 @@ cities.forEach((city) => {
 
 changedForm();
 
-io.on("election", (data) => {
+/*io.on("election", (data) => {
     console.log(
         `${data.candidate} foi eleito em ${data.city} para ${data.role}`
     );
-});
+});*/
