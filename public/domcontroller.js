@@ -13,6 +13,8 @@ const cities = [
     "Miracema",
     "Santo Antônio de Pádua",
     "São José de Ubá",
+    "Rio de Janeiro",
+    "São Paulo",
 ].sort();
 
 const cityDOM = document.querySelector("#city");

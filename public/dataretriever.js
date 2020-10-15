@@ -2,14 +2,22 @@ async function getVariableFile(city, role) {
     // IR AO TSE
     let cityCode = await getCityCode(city);
     const roleCode = String(roleStringToRoleCode(role)).padStart(4, "0");
-    const host = "../exemplos";
+    const host = "exemplos";
     const ciclo = "ele2020";
     const ambiente = "simulado";
     const codigo_eleicao = "8707";
     const uf = await getCityUF(city);
-    const filepath = `${host}/${ciclo}/divulgacao/${ambiente}/${codigo_eleicao}/dados/${uf}/${uf}${cityCode}-c${roleCode}-e${codigo_eleicao}-v.json`;
-    let raw_file = await fetch(filepath, { mode: "no-cors" });
+    const filepath = `${host}/${ciclo}/divulgacao/${ambiente}/${codigo_eleicao}/dados/${uf}/${uf}${cityCode}-c${roleCode}-e${codigo_eleicao.padStart(
+        6,
+        "0"
+    )}-v.json`;
+    let raw_file = await fetch(filepath, {
+        mode: "no-cors",
+        "Content-Type": "application/json",
+        Accept: "application/json",
+    });
     let json_file = await raw_file.json();
+    return json_file;
 }
 
 function getCandidateByNumber(number) {

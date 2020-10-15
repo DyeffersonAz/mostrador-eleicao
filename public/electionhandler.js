@@ -25,15 +25,9 @@ async function plotVotesPerCandidate(data) {
     let numbers = [];
 
     console.log(Object.getOwnPropertyNames(data));
-    for (let i = 0; i < Object.keys(data.candidates).length; i++) {
-        votesArray.push(
-            data.candidates[Object.getOwnPropertyNames(data.candidates)[i]]
-                .votes
-        );
-        numbers.push(
-            data.candidates[Object.getOwnPropertyNames(data.candidates)[i]]
-                .number
-        );
+    for (let i = 0; i < data.candidates.length; i++) {
+        votesArray.push(data.candidates[i].votes);
+        numbers.push(data.candidates[i].number);
     }
 
     let cityName = await getCityByCode(data.cl);
@@ -144,25 +138,29 @@ function generateTable(data) {
     headerRow.appendChild(elected);
 
     // ==> Creating the actual rows
-    Object.getOwnPropertyNames(data.candidates).forEach((candidate) => {
-        candidate = data.candidates[candidate];
-        let row = document.createElement("tr");
-        table.appendChild(row);
+    data.candidates
+        .sort((a, b) => a.votes - b.votes)
+        .reverse()
+        .forEach((candidate) => {
+            let row = document.createElement("tr");
+            table.appendChild(row);
 
-        let currCandidateName = document.createElement("td");
-        currCandidateName.textContent = candidate.number;
-        row.appendChild(currCandidateName);
+            let currCandidateName = document.createElement("td");
+            currCandidateName.textContent = candidate.number;
+            row.appendChild(currCandidateName);
 
-        let currCandidateVotes = document.createElement("td");
-        currCandidateVotes.textContent = candidate.votes;
-        row.appendChild(currCandidateVotes);
-        table.appendChild(row);
+            let currCandidateVotes = document.createElement("td");
+            currCandidateVotes.textContent = candidate.votes;
+            row.appendChild(currCandidateVotes);
+            table.appendChild(row);
 
-        let isCurrCandidateElected = document.createElement("td");
-        isCurrCandidateElected.textContent = candidate.elected ? "Sim" : "Não";
-        row.appendChild(isCurrCandidateElected);
-        table.appendChild(row);
-    });
+            let isCurrCandidateElected = document.createElement("td");
+            isCurrCandidateElected.textContent = candidate.elected
+                ? "Sim"
+                : "Não";
+            row.appendChild(isCurrCandidateElected);
+            table.appendChild(row);
+        });
 
     document.querySelector("#graphs").appendChild(table);
 }
@@ -183,20 +181,23 @@ function parseDataObject(data) {
     obj.as = String(data.abr[0].psa);
 
     //Candidatos e votos
-    obj.candidates = {};
+    obj.candidates = [];
     data.abr[0].cand.forEach((candidate) => {
-        obj.candidates[String(candidate.n)] = {};
-        obj.candidates[String(candidate.n)].number = String(candidate.n);
+        obj.candidates.push({});
+        obj.candidates[obj.candidates.length - 1].number = String(candidate.n);
         // VOTOS .......
         if (String(candidate.e) == "S") {
-            obj.candidates[String(candidate.n)].elected = true;
+            obj.candidates[obj.candidates.length - 1].elected = true;
         } else if (String(candidate.e) == "N") {
-            obj.candidates[String(candidate.n)].elected = false;
+            obj.candidates[obj.candidates.length - 1].elected = false;
         }
 
-        obj.candidates[String(candidate.n)].votes = parseInt(candidate.vap); // Número de votos
+        obj.candidates[obj.candidates.length - 1].votes = parseInt(
+            candidate.vap
+        ); // Número de votos
     });
 
+    obj.candidates = obj.candidates.sort((a, b) => b.vap - a.vap);
     return obj;
 
     /* ESBOÇO DE ARQUIVO FINAL:
