@@ -52,11 +52,22 @@ function getCandidateByNumber(number, fixedFile) {
     }
 }
 
+function getPartyByNumber(number, fixedFile) {
+    // NO AGUARDO DO TSE
+    let coligacoes = fixedFile.carg.col;
+    for (let col of coligacoes) {
+        for (let par of col.par) {
+            let party = par
+            for (let cand of par.cand) {
+                if (cand.n == number) {
+                    return party.sg;
+                }
+            }
+        }
+    }
+}
+
 async function getCityCode(city) {
-    // pegar a porcaria do json com os codigos e depois procurar uma cidade que tenha o mesmo nome e o código tse dela...
-
-    //https://raw.githubusercontent.com/betafcc/Municipios-Brasileiros-TSE/master/municipios_brasileiros_tse.json
-
     let codesDB = await fetch(
         "https://raw.githubusercontent.com/betafcc/Municipios-Brasileiros-TSE/master/municipios_brasileiros_tse.json"
     );

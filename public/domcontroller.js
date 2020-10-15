@@ -15,6 +15,9 @@ const cities = [
     "São José de Ubá",
     "Rio de Janeiro",
     "São Paulo",
+    "Nova Friburgo",
+    "Cabo Frio",
+    "Rio das Ostras"
 ].sort();
 
 const cityDOM = document.querySelector("#city");

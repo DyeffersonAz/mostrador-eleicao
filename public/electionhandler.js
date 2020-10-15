@@ -30,8 +30,13 @@ async function plotVotesPerCandidate(data) {
         names.push(data.candidates[i].name);
     }
 
+    if (names.length <= 0) {
+        return;
+    }
+
     let cityName = await getCityByCode(data.cl);
-    if (names.length <= 7) {
+    cityName = cityName.replace(/^\w/, (c) => c.toUpperCase());
+    if (names.length <= 2) {
         let graph = new Chart(document.getElementById("votesPerCandidate"), {
             type: "pie",
             data: {
@@ -49,7 +54,7 @@ async function plotVotesPerCandidate(data) {
             options: {
                 title: {
                     display: true,
-                    text: `Apuração de ${data.cl} para ${data.role}`,
+                    text: `Apuração de ${cityName} para ${data.role}`,
                 },
                 tooltips: {
                     callbacks: {
@@ -66,16 +71,14 @@ async function plotVotesPerCandidate(data) {
                 },
             },
         });
-    } else if (names.length > 7) {
+    } else if (names.length > 2) {
         let graph = new Chart(document.getElementById("votesPerCandidate"), {
             type: "bar",
             data: {
                 datasets: [
                     {
                         data: votesArray,
-                        backgroundColor: generateColors(
-                            Object.keys(data.candidates).length
-                        ),
+                        backgroundColor: generateColors(data.candidates.length),
                     },
                 ],
 
@@ -83,11 +86,11 @@ async function plotVotesPerCandidate(data) {
             },
             options: {
                 legend: {
-                    display: false
+                    display: false,
                 },
                 title: {
                     display: true,
-                    text: `Apuração de ${data.cl} para ${data.role}`,
+                    text: `Apuração de ${cityName} para ${data.role}`,
                 },
                 tooltips: {
                     callbacks: {
@@ -95,9 +98,13 @@ async function plotVotesPerCandidate(data) {
                             let label =
                                 data.datasets[0].data[tooltipItem.index];
 
-                            label = `${
-                                names[tooltipItem.index]
-                            }: ${label} votos`;
+                            label = `≅ ${
+                                Math.round((parseInt(votesArray[tooltipItem.index]) *
+                                    100) /
+                                (votesArray.reduce(function (a, b) {
+                                    return a + b;
+                                })))
+                            }% dos votos`;
                             return label;
                         },
                     },
@@ -110,8 +117,12 @@ async function plotVotesPerCandidate(data) {
 
 function plotUrnasApuradas(data) {
     console.log(data);
+
     if (document.getElementById("urnasApuradas")) {
         document.getElementById("urnasApuradas").remove();
+    }
+    if (data.candidates.length <= 0) {
+        return;
     }
     let myCanvas = document.createElement("canvas");
     myCanvas.id = "urnasApuradas";
@@ -168,6 +179,10 @@ function generateTable(data) {
     candidateName.textContent = "Candidato";
     headerRow.appendChild(candidateName);
 
+    let partyAbbr = document.createElement("th");
+    partyAbbr.textContent = "Partido";
+    headerRow.appendChild(partyAbbr);
+
     let votes = document.createElement("th");
     votes.textContent = "# de votos";
     headerRow.appendChild(votes);
@@ -175,6 +190,10 @@ function generateTable(data) {
     let elected = document.createElement("th");
     elected.textContent = "Eleito?";
     headerRow.appendChild(elected);
+
+    if (data.candidates.length <= 0) {
+        return;
+    }
 
     // ==> Creating the actual rows
     data.candidates
@@ -188,6 +207,10 @@ function generateTable(data) {
             currCandidateName.textContent = candidate.name;
             row.appendChild(currCandidateName);
 
+            let partyAbbr = document.createElement("td");
+            partyAbbr.textContent = candidate.party;
+            row.appendChild(partyAbbr);
+
             let currCandidateVotes = document.createElement("td");
             currCandidateVotes.textContent = candidate.votes;
             row.appendChild(currCandidateVotes);
@@ -197,6 +220,12 @@ function generateTable(data) {
             isCurrCandidateElected.textContent = candidate.elected
                 ? "Sim"
                 : "Não";
+            isCurrCandidateElected.style.backgroundColor = candidate.elected
+                ? "#30ff91"
+                : "#ff3037";
+            isCurrCandidateElected.style.color = candidate.elected
+                ? "#000000"
+                : "#FFFFFF";
             row.appendChild(isCurrCandidateElected);
             table.appendChild(row);
         });
@@ -217,7 +246,7 @@ async function parseDataObject(data) {
     obj.dh = String(data.dg) + " " + String(data.hg);
 
     // Seções apuradas (%)
-    obj.as = String(data.abr[0].psa);
+    obj.as = String(data.abr[0].pst);
 
     // => Dados fixos
     obj.dadosFixos = await getFixedFile(data.nadf);
@@ -228,6 +257,10 @@ async function parseDataObject(data) {
         obj.candidates.push({});
         obj.candidates[obj.candidates.length - 1].number = String(candidate.n);
         obj.candidates[obj.candidates.length - 1].name = getCandidateByNumber(
+            String(candidate.n),
+            obj.dadosFixos
+        );
+        obj.candidates[obj.candidates.length - 1].party = getPartyByNumber(
             String(candidate.n),
             obj.dadosFixos
         );
