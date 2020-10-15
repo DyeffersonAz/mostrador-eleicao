@@ -22,12 +22,12 @@ async function plotVotesPerCandidate(data) {
     document.querySelector("#graphs").appendChild(myCanvas);
 
     let votesArray = [];
-    let numbers = [];
+    let names = [];
 
     console.log(Object.getOwnPropertyNames(data));
     for (let i = 0; i < data.candidates.length; i++) {
         votesArray.push(data.candidates[i].votes);
-        numbers.push(data.candidates[i].number);
+        names.push(data.candidates[i].name);
     }
 
     let cityName = await getCityByCode(data.cl);
@@ -44,7 +44,7 @@ async function plotVotesPerCandidate(data) {
                 },
             ],
 
-            labels: numbers,
+            labels: names,
         },
         options: {
             title: {
@@ -56,7 +56,7 @@ async function plotVotesPerCandidate(data) {
                     label: function (tooltipItem, data) {
                         let label = data.datasets[0].data[tooltipItem.index];
 
-                        label = `${numbers[tooltipItem.index]}: ${label} votos`;
+                        label = `${names[tooltipItem.index]}: ${label} votos`;
                         return label;
                     },
                 },
@@ -78,7 +78,7 @@ function plotUrnasApuradas(data) {
 
     document.querySelector("#graphs").appendChild(myCanvas);
 
-    let urnasApuradas = parseFloat(data.as.replace(",", ".").slice(0, -1));
+    let urnasApuradas = parseFloat(data.as.replace(",", "."));
 
     let graph = new Chart(document.getElementById("urnasApuradas"), {
         type: "pie",
@@ -146,7 +146,7 @@ function generateTable(data) {
             table.appendChild(row);
 
             let currCandidateName = document.createElement("td");
-            currCandidateName.textContent = candidate.number;
+            currCandidateName.textContent = candidate.name;
             row.appendChild(currCandidateName);
 
             let currCandidateVotes = document.createElement("td");
@@ -165,7 +165,7 @@ function generateTable(data) {
     document.querySelector("#graphs").appendChild(table);
 }
 
-function parseDataObject(data) {
+async function parseDataObject(data) {
     let obj = {};
 
     // Código de Local
@@ -180,11 +180,15 @@ function parseDataObject(data) {
     // Seções apuradas (%)
     obj.as = String(data.abr[0].psa);
 
+    // => Dados fixos
+    obj.dadosFixos = await getFixedFile(data.nadf);
+
     //Candidatos e votos
     obj.candidates = [];
     data.abr[0].cand.forEach((candidate) => {
         obj.candidates.push({});
         obj.candidates[obj.candidates.length - 1].number = String(candidate.n);
+        obj.candidates[obj.candidates.length - 1].name = getCandidateByNumber(String(candidate.n), obj.dadosFixos);
         // VOTOS .......
         if (String(candidate.e) == "S") {
             obj.candidates[obj.candidates.length - 1].elected = true;
@@ -198,6 +202,7 @@ function parseDataObject(data) {
     });
 
     obj.candidates = obj.candidates.sort((a, b) => b.vap - a.vap);
+
     return obj;
 
     /* ESBOÇO DE ARQUIVO FINAL:

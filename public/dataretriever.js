@@ -20,8 +20,36 @@ async function getVariableFile(city, role) {
     return json_file;
 }
 
-function getCandidateByNumber(number) {
+async function getFixedFile(filename) {
+    const host = "exemplos";
+    const ciclo = "ele2020";
+    const ambiente = "simulado";
+    const codigo_eleicao = "8707";
+    const filepath = `${host}/${ciclo}/divulgacao/${ambiente}/${codigo_eleicao}/dados/${filename.slice(
+        0,
+        2
+    )}/${filename}.json`;
+    let raw_file = await fetch(filepath, {
+        mode: "no-cors",
+        "Content-Type": "application/json",
+        Accept: "application/json",
+    });
+    let json_file = await raw_file.json();
+    return json_file;
+}
+
+function getCandidateByNumber(number, fixedFile) {
     // NO AGUARDO DO TSE
+    let coligacoes = fixedFile.carg.col;
+    for (let colig of coligacoes) {
+        for (let party of colig.par) {
+            for (let candidate of party.cand) {
+                if (candidate.n == number) {
+                    return candidate.nm;
+                }
+            }
+        }
+    }
 }
 
 async function getCityCode(city) {
