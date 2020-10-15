@@ -38,7 +38,8 @@ async function changedForm() {
     let varfile = await getVariableFile(getCity(), getRole());
     varfile = await parseDataObject(varfile);
     plotVotesPerCandidate(varfile);
-    generateTable(varfile);
+    generateCandTable(varfile);
+    generateNullVotesTable(varfile);
     plotUrnasApuradas(varfile);
 }
 

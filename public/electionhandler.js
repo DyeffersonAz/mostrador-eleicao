@@ -98,13 +98,13 @@ async function plotVotesPerCandidate(data) {
                             let label =
                                 data.datasets[0].data[tooltipItem.index];
 
-                            label = `≅ ${
-                                Math.round((parseInt(votesArray[tooltipItem.index]) *
+                            label = `≅ ${Math.round(
+                                (parseInt(votesArray[tooltipItem.index]) *
                                     100) /
-                                (votesArray.reduce(function (a, b) {
-                                    return a + b;
-                                })))
-                            }% dos votos`;
+                                    votesArray.reduce(function (a, b) {
+                                        return a + b;
+                                    })
+                            )}% dos votos`;
                             return label;
                         },
                     },
@@ -164,13 +164,14 @@ function plotUrnasApuradas(data) {
     graph.options.title.text = `Urnas Apuradas`;
 }
 
-function generateTable(data) {
-    if (document.querySelector("table")) {
-        document.querySelector("table").remove();
+function generateCandTable(data) {
+    if (document.querySelector("#candTable")) {
+        document.querySelector("#candTable").remove();
     }
 
     let table = document.createElement("table");
     table.className = "table-responsive";
+    table.id = "candTable";
     let headerRow = document.createElement("tr");
     table.appendChild(headerRow); // Creating the row that has headers
 
@@ -233,6 +234,38 @@ function generateTable(data) {
     document.querySelector("#graphs").appendChild(table);
 }
 
+function generateNullVotesTable(data) {
+    if (document.querySelector("#nullVotesTable")) {
+        document.querySelector("#nullVotesTable").remove();
+    }
+
+    let table = document.createElement("table");
+    table.className = "table-responsive";
+    table.id = "nullVotesTable";
+
+    let whiteVotes = document.createElement("tr");
+    let whiteVotesText = document.createElement("th");
+    whiteVotesText.textContent = "Votos Brancos";
+    whiteVotes.appendChild(whiteVotesText);
+    let whiteVotesNumber = document.createElement("td");
+    whiteVotesNumber.textContent = data.whiteVotes;
+    whiteVotes.appendChild(whiteVotesNumber);
+
+    let nullVotes = document.createElement("tr");
+    let nullVotesText = document.createElement("th");
+    nullVotesText.textContent = "Votos Nulos";
+    nullVotes.appendChild(nullVotesText);
+    let nullVotesNumber = document.createElement("td");
+    nullVotesNumber.textContent = data.nullVotes;
+    nullVotes.appendChild(nullVotesNumber);
+
+    table.appendChild(whiteVotes);
+    table.appendChild(nullVotes);
+
+
+    document.querySelector("#graphs").appendChild(table);
+}
+
 async function parseDataObject(data) {
     let obj = {};
 
@@ -247,6 +280,12 @@ async function parseDataObject(data) {
 
     // Seções apuradas (%)
     obj.as = String(data.abr[0].pst);
+
+    // Votos brancos
+    obj.whiteVotes = String(data.abr[0].vb);
+
+    // Votos nulos
+    obj.nullVotes = String(data.abr[0].tvn);
 
     // => Dados fixos
     obj.dadosFixos = await getFixedFile(data.nadf);

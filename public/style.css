@@ -1,12 +1,20 @@
 #graphs {
     display: grid;
 }
-table {
-    margin: auto;
-    grid-column: 2;
+#candTable {
+    grid-column: 3;
     grid-row-start: 1;
     grid-row-end: 30;
+}
+
+#nullVotesTable {
+    grid-column: 2;
+    grid-row: 2;
+}
+
+table {
     text-align: center;
+    margin: auto;
 }
 
 table tr {
@@ -17,10 +25,14 @@ table tr {
 table tr td {
     border-left: 2px solid gray;
     border-right: 2px solid gray;
+    padding-right: 0.4em;
+    padding-left: 0.4em;
 }
 table tr th {
     border: 2px solid gray;
     background-color: azure;
+    padding-right: 0.4em;
+    padding-left: 0.4em;
 }
 
 canvas {
@@ -38,7 +50,7 @@ canvas#votesPerCandidate {
     grid-row-start: 1;
     grid-row-end: 1;
     grid-column-start: 1;
-    grid-column-end: 1;
+    grid-column-end: 3;
 }
 
 canvas#urnasApuradas {
