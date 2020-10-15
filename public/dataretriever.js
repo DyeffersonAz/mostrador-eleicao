@@ -1,39 +1,7 @@
 async function getVariableFile(city, role) {
     // IR AO TSE
     let cityCode = await getCityCode(city);
-    return {
-        carper: `${roleStringToRoleCode(role)}`,
-        dg: "02/10/2020",
-        hg: "14:30:10",
-        abr: [
-            {
-                cdabr: `${cityCode}`,
-                psa: "75,878%",
-                cand: [
-                    {
-                        n: "Zé Moreira",
-                        e: "N",
-                        vap: 150,
-                    },
-                    {
-                        n: "Zé Ferreira",
-                        e: "N",
-                        vap: 200,
-                    },
-                    {
-                        n: "José Cavalo",
-                        e: "N",
-                        vap: 300,
-                    },
-                    {
-                        n: "Fábio Mula",
-                        e: "N",
-                        vap: 258,
-                    },
-                ],
-            },
-        ],
-    };
+    
 }
 
 function getCandidateByNumber(number) {
