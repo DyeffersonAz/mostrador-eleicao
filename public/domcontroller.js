@@ -51,6 +51,8 @@ cities.forEach((city) => {
     cityDOM.appendChild(currCityOption);
 });
 
+askNotificationPermission();
+
 getFiles();
 
 setInterval(getFiles, 300000);

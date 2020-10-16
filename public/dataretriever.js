@@ -1,4 +1,5 @@
 var fileCache = {};
+var electedCitiesAndRoles = [];
 
 async function getVariableFile(city, role) {
     // IR AO TSE
@@ -45,7 +46,36 @@ async function getFiles() {
     for (let city of cities) {
         fileCache[`${city}_prefeito`] = await getVariableFile(city, "prefeito");
         fileCache[`${city}_vereador`] = await getVariableFile(city, "vereador");
+
+        let parsedElectedStored = await JSON.parse(
+            localStorage.getItem("elected")
+        );
+
+        if (parsedElectedStored === null) {
+            parsedElectedStored = [];
+        }
+
+        if (
+            checkElected(fileCache[`${city}_prefeito`]) &&
+            !parsedElectedStored.includes(`${city}_prefeito`)
+        ) {
+            electedCitiesAndRoles.push(`${city}_prefeito`);
+            localStorage.setItem("elected", electedCitiesAndRoles);
+            notifyElection("ELEIÇÃO!", `Prefeito(a) eleito(a) em ${city}`);
+        }
+        if (
+            checkElected(fileCache[`${city}_vereador`]) &&
+            !parsedElectedStored.includes(`${city}_vereador`)
+        ) {
+            electedCitiesAndRoles.push(`${city}_vereador`);
+            localStorage.setItem(
+                "elected",
+                JSON.stringify(electedCitiesAndRoles)
+            );
+            notifyElection("ELEIÇÃO!", `Vereador(a) eleito(a) em ${city}`);
+        }
     }
+    console.log(fileCache);
     changedForm();
 }
 

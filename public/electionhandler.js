@@ -12,7 +12,7 @@ function generateColors(qnt) {
 }
 
 async function plotVotesPerCandidate(data) {
-    console.log(data);
+    //console.log(data);
     if (document.getElementById("votesPerCandidate")) {
         document.getElementById("votesPerCandidate").remove();
     }
@@ -24,7 +24,7 @@ async function plotVotesPerCandidate(data) {
     let votesArray = [];
     let names = [];
 
-    console.log(Object.getOwnPropertyNames(data));
+    //console.log(Object.getOwnPropertyNames(data));
     for (let i = 0; i < data.candidates.length; i++) {
         votesArray.push(data.candidates[i].votes);
         names.push(data.candidates[i].name);
@@ -115,7 +115,7 @@ async function plotVotesPerCandidate(data) {
 }
 
 function plotUrnasApuradas(data) {
-    console.log(data);
+    //console.log(data);
 
     if (document.getElementById("urnasApuradas")) {
         document.getElementById("urnasApuradas").remove();
@@ -261,6 +261,12 @@ function generateNullVotesTable(data) {
 
 
     document.querySelector("#graphs").appendChild(table);
+}
+
+function checkElected(data) {
+    let elected = data.abr[0].cand.filter((c) => c.e == "S");
+
+    return elected.length > 0;
 }
 
 async function parseDataObject(data) {
