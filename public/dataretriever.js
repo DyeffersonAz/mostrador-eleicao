@@ -1,5 +1,8 @@
+var fileCache = {};
+
 async function getVariableFile(city, role) {
     // IR AO TSE
+    console.log(`Pegando arquivo da eleição de ${city} para ${role}`);
     let cityCode = await getCityCode(city);
     const roleCode = String(roleStringToRoleCode(role)).padStart(4, "0");
     const host = "exemplos";
@@ -36,6 +39,17 @@ async function getFixedFile(filename) {
     });
     let json_file = await raw_file.json();
     return json_file;
+}
+
+async function getFiles() {
+    for (let city of cities) {
+        fileCache[`${city}_prefeito`] = await getVariableFile(city, "prefeito");
+        fileCache[`${city}_vereador`] = await getVariableFile(city, "vereador");
+    }
+}
+
+function getStoredFile(city, role) {
+    return fileCache[`${city}_${role}`];
 }
 
 function getCandidateByNumber(number, fixedFile) {

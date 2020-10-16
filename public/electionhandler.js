@@ -112,7 +112,6 @@ async function plotVotesPerCandidate(data) {
             },
         });
     }
-    graph.options.title.text = `Apuração de ${cityName} para ${data.role}`;
 }
 
 function plotUrnasApuradas(data) {

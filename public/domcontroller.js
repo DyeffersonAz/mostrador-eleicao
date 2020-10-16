@@ -35,7 +35,7 @@ function getRole() {
 }
 
 async function changedForm() {
-    let varfile = await getVariableFile(getCity(), getRole());
+    let varfile = await getStoredFile(getCity(), getRole());
     varfile = await parseDataObject(varfile);
     plotVotesPerCandidate(varfile);
     generateCandTable(varfile);
@@ -51,7 +51,13 @@ cities.forEach((city) => {
     cityDOM.appendChild(currCityOption);
 });
 
-changedForm();
+getFiles().then(changedForm);
+
+setInterval(getFiles, 300000);
+
+// GET all files 5 in 5 minutes
+
+//Just show as needed
 
 /*io.on("election", (data) => {
     console.log(
