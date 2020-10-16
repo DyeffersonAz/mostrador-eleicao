@@ -51,7 +51,7 @@ cities.forEach((city) => {
     cityDOM.appendChild(currCityOption);
 });
 
-getFiles().then(changedForm);
+getFiles();
 
 setInterval(getFiles, 300000);
 

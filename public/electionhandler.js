@@ -104,7 +104,7 @@ async function plotVotesPerCandidate(data) {
                                     votesArray.reduce(function (a, b) {
                                         return a + b;
                                     })
-                            )}% dos votos`;
+                            )}% dos votos (${votesArray[tooltipItem.index]})`;
                             return label;
                         },
                     },

@@ -46,6 +46,7 @@ async function getFiles() {
         fileCache[`${city}_prefeito`] = await getVariableFile(city, "prefeito");
         fileCache[`${city}_vereador`] = await getVariableFile(city, "vereador");
     }
+    changedForm();
 }
 
 function getStoredFile(city, role) {
