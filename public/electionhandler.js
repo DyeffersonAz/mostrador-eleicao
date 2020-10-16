@@ -136,7 +136,7 @@ function plotUrnasApuradas(data) {
         data: {
             datasets: [
                 {
-                    data: [urnasApuradas, 100 - urnasApuradas],
+                    data: [urnasApuradas, (100 - urnasApuradas)],
                     backgroundColor: ["#00b31b", "#e61e1e"],
                 },
             ],
@@ -160,8 +160,6 @@ function plotUrnasApuradas(data) {
             },
         },
     });
-
-    graph.options.title.text = `Urnas Apuradas`;
 }
 
 function generateCandTable(data) {
