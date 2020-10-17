@@ -1,5 +1,8 @@
-var fileCache = {};
-var electedCitiesAndRoles = [];
+var fileCache = {}; // Arquivos (mais recentes) salvos
+
+if (localStorage.getItem("elected") === null) {
+    localStorage.setItem("elected", JSON.stringify([]));
+}
 
 async function getVariableFile(city, role) {
     // IR AO TSE
@@ -43,39 +46,29 @@ async function getFixedFile(filename) {
 }
 
 async function getFiles() {
+    let electedCache = await JSON.parse(localStorage.getItem("elected"));
     for (let city of cities) {
         fileCache[`${city}_prefeito`] = await getVariableFile(city, "prefeito");
         fileCache[`${city}_vereador`] = await getVariableFile(city, "vereador");
 
-        let parsedElectedStored = await JSON.parse(
-            localStorage.getItem("elected")
-        );
-
-        if (parsedElectedStored === null) {
-            parsedElectedStored = [];
-        }
-
         if (
             checkElected(fileCache[`${city}_prefeito`]) &&
-            !parsedElectedStored.includes(`${city}_prefeito`)
+            !electedCache.includes(`${city}_prefeito`)
         ) {
-            electedCitiesAndRoles.push(`${city}_prefeito`);
-            localStorage.setItem("elected", electedCitiesAndRoles);
+            electedCache.push(`${city}_prefeito`);
             notifyElection("ELEIÇÃO!", `Prefeito(a) eleito(a) em ${city}`);
         }
         if (
             checkElected(fileCache[`${city}_vereador`]) &&
-            !parsedElectedStored.includes(`${city}_vereador`)
+            !electedCache.includes(`${city}_vereador`)
         ) {
-            electedCitiesAndRoles.push(`${city}_vereador`);
-            localStorage.setItem(
-                "elected",
-                JSON.stringify(electedCitiesAndRoles)
-            );
+            electedCache.push(`${city}_vereador`);
             notifyElection("ELEIÇÃO!", `Vereador(a) eleito(a) em ${city}`);
         }
     }
     console.log(fileCache);
+    localStorage.setItem('elected', JSON.stringify(electedCache));
+    console.log(localStorage.getItem("elected"));
     changedForm();
 }
 
