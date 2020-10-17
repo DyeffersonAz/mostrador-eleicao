@@ -62,9 +62,13 @@ async function plotVotesPerCandidate(data) {
                             let label =
                                 data.datasets[0].data[tooltipItem.index];
 
-                            label = `${
-                                names[tooltipItem.index]
-                            }: ${label} votos`;
+                            label = `≅ ${Math.round(
+                                (parseInt(votesArray[tooltipItem.index]) *
+                                    100) /
+                                    votesArray.reduce(function (a, b) {
+                                        return a + b;
+                                    })
+                            )}% dos votos (${votesArray[tooltipItem.index]})`;
                             return label;
                         },
                     },
@@ -135,7 +139,7 @@ function plotUrnasApuradas(data) {
         data: {
             datasets: [
                 {
-                    data: [urnasApuradas, (100 - urnasApuradas)],
+                    data: [urnasApuradas, 100 - urnasApuradas],
                     backgroundColor: ["#00b31b", "#e61e1e"],
                 },
             ],
@@ -258,7 +262,6 @@ function generateNullVotesTable(data) {
 
     table.appendChild(whiteVotes);
     table.appendChild(nullVotes);
-
 
     document.querySelector("#graphs").appendChild(table);
 }
