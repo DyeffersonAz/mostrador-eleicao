@@ -17,7 +17,7 @@ const cities = [
     "São Paulo",
     "Nova Friburgo",
     "Cabo Frio",
-    "Rio das Ostras"
+    "Rio das Ostras",
 ].sort();
 
 const cityDOM = document.querySelector("#city");
@@ -36,7 +36,21 @@ function getRole() {
 
 async function changedForm() {
     let varfile = await getStoredFile(getCity(), getRole());
-    varfile = await parseDataObject(varfile);
+
+    Object.keys(fileCache).forEach((electionName) => {
+        if (fileCache[electionName].role == getRole().toLowerCase()) {
+            let thisCityElement = document.getElementById(
+                fileCache[electionName].nl.replaceAll(" ", "-").toLowerCase()
+            );
+            if (checkElected(fileCache[electionName])) {
+                //thisCityElement.value = `${fileCache[electionName].nl} *`;
+                thisCityElement.textContent = `${fileCache[electionName].nl} ✅`;
+            } else {
+                thisCityElement.textContent = `${fileCache[electionName].nl} ❌`;
+            }
+        }
+    });
+
     plotVotesPerCandidate(varfile);
     generateCandTable(varfile);
     generateNullVotesTable(varfile);
@@ -46,8 +60,9 @@ async function changedForm() {
 // On page load ====
 cities.forEach((city) => {
     let currCityOption = document.createElement("option");
-    currCityOption.value = city;
-    currCityOption.textContent = city;
+    currCityOption.id = city.replaceAll(" ", "-").toLowerCase();
+    currCityOption.value = city.toUpperCase();
+    currCityOption.textContent = city.toUpperCase();
     cityDOM.appendChild(currCityOption);
 });
 

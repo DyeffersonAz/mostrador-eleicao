@@ -1,4 +1,5 @@
 var fileCache = {}; // Arquivos (mais recentes) salvos
+var electionFeed = [];
 
 if (localStorage.getItem("elected") === null) {
     localStorage.setItem("elected", JSON.stringify([]));
@@ -47,33 +48,40 @@ async function getFixedFile(filename) {
 
 async function getFiles() {
     let electedCache = await JSON.parse(localStorage.getItem("elected"));
+
     for (let city of cities) {
-        fileCache[`${city}_prefeito`] = await getVariableFile(city, "prefeito");
-        fileCache[`${city}_vereador`] = await getVariableFile(city, "vereador");
+        let prefeito = await getVariableFile(city, "prefeito");
+        let vereador = await getVariableFile(city, "vereador");
+
+        prefeito = await parseDataObject(prefeito);
+        vereador = await parseDataObject(vereador);
+
+        fileCache[`${city.toLowerCase()}_prefeito`] = prefeito;
+        fileCache[`${city.toLowerCase()}_vereador`] = vereador;
 
         if (
-            checkElected(fileCache[`${city}_prefeito`]) &&
-            !electedCache.includes(`${city}_prefeito`)
+            checkElected(prefeito) &&
+            !electedCache.includes(`${city.toLowerCase()}_prefeito`)
         ) {
-            electedCache.push(`${city}_prefeito`);
+            electedCache.push(`${city.toLowerCase()}_prefeito`);
             notifyElection("ELEIÇÃO!", `Prefeito(a) eleito(a) em ${city}`);
         }
         if (
-            checkElected(fileCache[`${city}_vereador`]) &&
-            !electedCache.includes(`${city}_vereador`)
+            checkElected(vereador) &&
+            !electedCache.includes(`${city.toLowerCase()}_vereador`)
         ) {
-            electedCache.push(`${city}_vereador`);
+            electedCache.push(`${city.toLowerCase()}_vereador`);
             notifyElection("ELEIÇÃO!", `Vereador(a) eleito(a) em ${city}`);
         }
     }
     console.log(fileCache);
-    localStorage.setItem('elected', JSON.stringify(electedCache));
+    localStorage.setItem("elected", JSON.stringify(electedCache));
     console.log(localStorage.getItem("elected"));
     changedForm();
 }
 
 function getStoredFile(city, role) {
-    return fileCache[`${city}_${role}`];
+    return fileCache[`${city.toLowerCase()}_${role}`];
 }
 
 function getCandidateByNumber(number, fixedFile) {

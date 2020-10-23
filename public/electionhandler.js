@@ -267,7 +267,7 @@ function generateNullVotesTable(data) {
 }
 
 function checkElected(data) {
-    let elected = data.abr[0].cand.filter((c) => c.e == "S");
+    let elected = data.candidates.filter((c) => c.elected);
 
     return elected.length > 0;
 }
@@ -277,6 +277,9 @@ async function parseDataObject(data) {
 
     // Código de Local
     obj.cl = String(data.abr[0].cdabr);
+
+    // Nome de Local
+    obj.nl = await getCityByCode(obj.cl);
 
     // Role parsing
     obj.role = roleCodeToRoleString(data.carper);
