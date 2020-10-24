@@ -12,6 +12,15 @@
     grid-row: 2;
 }
 
+#feed-list {
+    list-style-type: "🌁";
+}
+
+#feed-div button {
+    margin-left: 10em;
+    width: 100%;
+}
+
 table {
     text-align: center;
     margin: auto;

@@ -1,41 +1,47 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Eleições 2020</title>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+        <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+            integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+            crossorigin="anonymous"
+        />
+        <link rel="stylesheet" href="style.css" />
+        <!-- <script src="/socket.io/socket.io.js"></script> -->
+    </head>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Eleições 2020</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-    <link rel="stylesheet" href="style.css" />
-    <!-- <script src="/socket.io/socket.io.js"></script> -->
-</head>
+    <body>
+        <form>
+            <label for="city">Cidade:</label>
+            <select name="city" id="city" onchange="changedForm()">
+                <!-- OPTIONS INSERTED BY JAVASCRIPT -->
+            </select>
 
-<body>
-    <form>
-        <label for="city">Cidade:</label>
-        <select name="city" id="city" onchange="changedForm()">
-            <!-- OPTIONS INSERTED BY JAVASCRIPT -->
-        </select>
+            <label for="role">Cargo:</label>
+            <select name="role" id="role" onchange="changedForm()">
+                <option value="prefeito">Prefeito</option>
+                <option value="vereador">Vereador</option>
+            </select>
+        </form>
+        <div id="graphs">
+            <canvas id="votesPerCandidate"></canvas>
+            <canvas id="urnasApuradas"></canvas>
 
-        <label for="role">Cargo:</label>
-        <select name="role" id="role" onchange="changedForm()">
-            <option value="prefeito">Prefeito</option>
-            <option value="vereador">Vereador</option>
-        </select>
-    </form>
-    <div id="graphs">
-        <canvas id="votesPerCandidate"></canvas>
-        <canvas id="urnasApuradas"></canvas>
+            <!-- <button onclick="delete localStorage.elected">Limpar cache (CUIDADO)</button> -->
+        </div>
 
-        <button onclick="delete localStorage.elected">Limpar cache (CUIDADO)</button>
-    </div>
+        <div id="elected-div">
+            <button onclick="toggleElectionFeed()">Feed de eleitos</button>
+        </div>
 
-    <script src="notifier.js"></script>
-    <script src="dataretriever.js"></script>
-    <script src="electionhandler.js"></script>
-    <script src="domcontroller.js"></script>
-</body>
-
+        <script src="notifier.js"></script>
+        <script src="dataretriever.js"></script>
+        <script src="electionhandler.js"></script>
+        <script src="domcontroller.js"></script>
+    </body>
 </html>

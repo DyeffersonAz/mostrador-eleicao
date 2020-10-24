@@ -57,6 +57,30 @@ async function changedForm() {
     plotUrnasApuradas(varfile);
 }
 
+async function toggleElectionFeed() {
+    if (document.getElementById("feed")) {
+        document.getElementById("feed").remove();
+        return;
+    }
+    let content = await JSON.parse(localStorage.getItem("elected"));
+    
+    let feed = document.createElement("div");
+    feed.id = "feed";
+    document.querySelector("#elected-div").appendChild(feed);
+
+    if (content !== null) {
+        let list = document.createElement("ul");
+        list.id = "feed-list"
+        document.querySelector("#feed").appendChild(list);
+
+        for (let election of content.reverse()) {
+            let item = document.createElement("li");
+            item.textContent = election.replaceAll("_", " → ");
+            document.querySelector("#feed-list").appendChild(item);
+        }
+    }
+}
+
 // On page load ====
 cities.forEach((city) => {
     let currCityOption = document.createElement("option");
