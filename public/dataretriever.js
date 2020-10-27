@@ -10,17 +10,17 @@ async function getVariableFile(city, role) {
     console.log(`Pegando arquivo da eleição de ${city} para ${role}`);
     let cityCode = await getCityCode(city);
     const roleCode = String(roleStringToRoleCode(role)).padStart(4, "0");
-    const host = "exemplos";
+    const host = "https://resultados.tse.jus.br";
     const ciclo = "ele2020";
     const ambiente = "simulado";
-    const codigo_eleicao = "8707";
+    const codigo_eleicao = "8334";
     const uf = await getCityUF(city);
-    const filepath = `${host}/${ciclo}/divulgacao/${ambiente}/${codigo_eleicao}/dados/${uf}/${uf}${cityCode}-c${roleCode}-e${codigo_eleicao.padStart(
+    const filepath = `${host}/publico/${ciclo}/divulgacao/${ambiente}/${codigo_eleicao}/dados/${uf}/${uf}${cityCode}-c${roleCode}-e${codigo_eleicao.padStart(
         6,
         "0"
     )}-v.json`;
     let raw_file = await fetch(filepath, {
-        mode: "no-cors",
+        // mode: "no-cors",
         "Content-Type": "application/json",
         Accept: "application/json",
     });
@@ -29,16 +29,15 @@ async function getVariableFile(city, role) {
 }
 
 async function getFixedFile(filename) {
-    const host = "exemplos";
+    const host = "https://resultados.tse.jus.br";
     const ciclo = "ele2020";
     const ambiente = "simulado";
-    const codigo_eleicao = "8707";
-    const filepath = `${host}/${ciclo}/divulgacao/${ambiente}/${codigo_eleicao}/dados/${filename.slice(
+    const codigo_eleicao = "8334";
+    const filepath = `${host}/publico/${ciclo}/divulgacao/${ambiente}/${codigo_eleicao}/dados/${filename.slice(
         0,
         2
     )}/${filename}.json`;
     let raw_file = await fetch(filepath, {
-        mode: "no-cors",
         "Content-Type": "application/json",
         Accept: "application/json",
     });

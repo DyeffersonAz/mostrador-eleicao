@@ -24,10 +24,11 @@ async function plotVotesPerCandidate(data) {
     let votesArray = [];
     let names = [];
 
+    let candidates = data.candidates.sort((a, b) => a.seq - b.seq);
     //console.log(Object.getOwnPropertyNames(data));
-    for (let i = 0; i < data.candidates.length; i++) {
-        votesArray.push(data.candidates[i].votes);
-        names.push(data.candidates[i].name);
+    for (let i = 0; i < candidates.length; i++) {
+        votesArray.push(candidates[i].votes);
+        names.push(candidates[i].name);
     }
 
     if (names.length <= 0) {
@@ -36,7 +37,7 @@ async function plotVotesPerCandidate(data) {
 
     let cityName = await getCityByCode(data.cl);
     cityName = cityName.replace(/^\w/, (c) => c.toUpperCase());
-    if (names.length <= 2) {
+    if (names.length <= 4) {
         let graph = new Chart(document.getElementById("votesPerCandidate"), {
             type: "pie",
             data: {
@@ -75,7 +76,7 @@ async function plotVotesPerCandidate(data) {
                 },
             },
         });
-    } else if (names.length > 2) {
+    } else if (names.length > 4) {
         let graph = new Chart(document.getElementById("votesPerCandidate"), {
             type: "bar",
             data: {
@@ -322,6 +323,8 @@ async function parseDataObject(data) {
         obj.candidates[obj.candidates.length - 1].votes = parseInt(
             candidate.vap
         ); // Número de votos
+
+        obj.candidates[obj.candidates.length - 1].seq = candidate.seq;
     });
 
     obj.candidates = obj.candidates.sort((a, b) => b.vap - a.vap);
