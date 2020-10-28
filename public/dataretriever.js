@@ -5,42 +5,62 @@ if (localStorage.getItem("elected") === null) {
     localStorage.setItem("elected", JSON.stringify([]));
 }
 
+const host = "https://resultados.tse.jus.br/publico";
+const ciclo = "ele2020";
+const ambiente = "simulado";
+const codigo_eleicao = "8334";
+
+function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function getVariableFile(city, role) {
     // IR AO TSE
     console.log(`Pegando arquivo da eleição de ${city} para ${role}`);
     let cityCode = await getCityCode(city);
     const roleCode = String(roleStringToRoleCode(role)).padStart(4, "0");
-    const host = "https://resultados.tse.jus.br";
-    const ciclo = "ele2020";
-    const ambiente = "simulado";
-    const codigo_eleicao = "8334";
     const uf = await getCityUF(city);
-    const filepath = `${host}/publico/${ciclo}/divulgacao/${ambiente}/${codigo_eleicao}/dados/${uf}/${uf}${cityCode}-c${roleCode}-e${codigo_eleicao.padStart(
+    const filepath = `${host}/${ciclo}/divulgacao/${ambiente}/${codigo_eleicao}/dados/${uf}/${uf}${cityCode}-c${roleCode}-e${codigo_eleicao.padStart(
         6,
         "0"
     )}-v.json`;
-    let raw_file = await fetch(filepath, {
+    let raw_file = await fetch(`fetch/${filepath}`, {
         // mode: "no-cors",
         "Content-Type": "application/json",
         Accept: "application/json",
     });
+
+    if (raw_file.status == 429) {
+        await sleep(1000);
+        raw_file = await fetch(`fetch/${filepath}`, {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+        });
+    }
+
     let json_file = await raw_file.json();
     return json_file;
 }
 
 async function getFixedFile(filename) {
-    const host = "https://resultados.tse.jus.br";
-    const ciclo = "ele2020";
-    const ambiente = "simulado";
-    const codigo_eleicao = "8334";
-    const filepath = `${host}/publico/${ciclo}/divulgacao/${ambiente}/${codigo_eleicao}/dados/${filename.slice(
+    const filepath = `${host}/${ciclo}/divulgacao/${ambiente}/${codigo_eleicao}/dados/${filename.slice(
         0,
         2
     )}/${filename}.json`;
-    let raw_file = await fetch(filepath, {
+
+    let raw_file = await fetch(`fetch/${filepath}`, {
         "Content-Type": "application/json",
         Accept: "application/json",
     });
+
+    if (raw_file.status == 429) {
+        await sleep(1000);
+        raw_file = await fetch(`fetch/${filepath}`, {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+        });
+    }
+
     let json_file = await raw_file.json();
     return json_file;
 }
@@ -70,7 +90,6 @@ async function getFiles() {
                 );
             }
         }
-
 
         // => VEREADOR
         if (!electedCache.includes(`${city.toLowerCase()}_vereador`)) {
