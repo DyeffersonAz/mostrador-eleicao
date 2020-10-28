@@ -1,5 +1,6 @@
 const express = require("express");
-const requests = require("request");
+const requestLimit = require("express-rate-limit");
+const fetch = require("node-fetch");
 
 let app = express();
 let http = require("http").createServer(app);
@@ -7,22 +8,23 @@ const port = 3000;
 
 app.use(express.static("public"));
 
-let server = app.listen(port, () => {
-    console.log(`Escutando em ${port}`);
-    
+const limiter = requestLimit({
+    windowMs: 500,
+    max: 1,
+    onLimitReached: (req, res, options) => {
+        console.log("LIMITE!!!");
+    },
 });
 
-app.get("/", (req, res) => {
-    socketio.emit('election', {
-        city: "itaocara",
-        candidate: "josé cavalo",
-        role: "prefeito"
-    })
-})
-const socketio = require("socket.io")(server);
-
-
-
-async function checkElections(city) {
-    // TODO: Pedir arquivo ao TSE de uma cidade em específico passada na função, converter arquivo pra JSON e depois checar se algum candidato está eleito e mandar em um socket para os clientes a informação da eleição.
-}
+app.use(limiter);
+let server = app.listen(port, () => {
+    console.log(`Escutando em ${port}`);
+});
+app.get("/fetch/*", async (req, res) => {
+    console.log("Cheguei aqui!!")
+    let result = await fetch(req.params[0]);
+    let json = await result.json()
+    console.log("Result = " + String(result));
+    console.log("JSON = " + String(result));
+    res.send(json);
+});
