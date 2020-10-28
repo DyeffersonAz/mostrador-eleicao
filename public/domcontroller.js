@@ -19,7 +19,7 @@ const cities = [
     // "Cabo Frio",
     // "Rio das Ostras",
     "Dourados",
-    "Três Lagoas"
+    "Três Lagoas",
 ].sort();
 
 const cityDOM = document.querySelector("#city");
@@ -44,10 +44,14 @@ async function changedForm() {
             let thisCityElement = document.getElementById(
                 fileCache[electionName].nl.replaceAll(" ", "-").toLowerCase()
             );
-            if (checkElected(fileCache[electionName])) {
+            if (checkElected(fileCache[electionName]) == "eleito") {
                 //thisCityElement.value = `${fileCache[electionName].nl} *`;
                 thisCityElement.textContent = `${fileCache[electionName].nl} ✅`;
-            } else {
+            } else if (
+                checkElected(fileCache[electionName]) == "matematicamente"
+            ) {
+                thisCityElement.textContent = `${fileCache[electionName].nl} ⚠`;
+            } else if (!checkElected(fileCache[electionName])) {
                 thisCityElement.textContent = `${fileCache[electionName].nl} ❌`;
             }
         }
@@ -65,14 +69,14 @@ async function toggleElectionFeed() {
         return;
     }
     let content = await JSON.parse(localStorage.getItem("elected"));
-    
+
     let feed = document.createElement("div");
     feed.id = "feed";
     document.querySelector("#elected-div").appendChild(feed);
 
     if (content !== null) {
         let list = document.createElement("ul");
-        list.id = "feed-list"
+        list.id = "feed-list";
         document.querySelector("#feed").appendChild(list);
 
         for (let election of content.reverse()) {

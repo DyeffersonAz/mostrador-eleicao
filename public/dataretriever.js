@@ -58,19 +58,31 @@ async function getFiles() {
         fileCache[`${city.toLowerCase()}_prefeito`] = prefeito;
         fileCache[`${city.toLowerCase()}_vereador`] = vereador;
 
-        if (
-            checkElected(prefeito) &&
-            !electedCache.includes(`${city.toLowerCase()}_prefeito`)
-        ) {
-            electedCache.push(`${city.toLowerCase()}_prefeito`);
-            notifyElection("ELEIÇÃO!", `Prefeito(a) eleito(a) em ${city}`);
+        // => PREFEITO
+        if (!electedCache.includes(`${city.toLowerCase()}_prefeito`)) {
+            if (checkElected(prefeito) == "eleito") {
+                electedCache.push(`${city.toLowerCase()}_prefeito`);
+                notifyElection("ELEIÇÃO!", `Prefeito(a) eleito(a) em ${city}`);
+            } else if (checkElected(prefeito) == "matematicamente") {
+                notifyMatematicamente(
+                    "MATEMATICAMENTE ELEITO!",
+                    `Prefeito(a) matematicamente eleito(a) em ${city}. Resta aguardar ainda se o TSE vai considerar eleito(a) ou não.`
+                );
+            }
         }
-        if (
-            checkElected(vereador) &&
-            !electedCache.includes(`${city.toLowerCase()}_vereador`)
-        ) {
-            electedCache.push(`${city.toLowerCase()}_vereador`);
-            notifyElection("ELEIÇÃO!", `Vereador(a) eleito(a) em ${city}`);
+
+
+        // => VEREADOR
+        if (!electedCache.includes(`${city.toLowerCase()}_vereador`)) {
+            if (checkElected(vereador) == "eleito") {
+                electedCache.push(`${city.toLowerCase()}_vereador`);
+                notifyElection("ELEIÇÃO!", `Vereador(a) eleito(a) em ${city}`);
+            } else if (checkElected(vereador) == "matematicamente") {
+                notifyMatematicamente(
+                    "MATEMATICAMENTE ELEITO!",
+                    `Vereador(a) matematicamente eleito(a) em ${city}. Resta aguardar ainda se o TSE vai considerar eleito(a) ou não.`
+                );
+            }
         }
     }
     console.log(fileCache);

@@ -220,15 +220,21 @@ function generateCandTable(data) {
             table.appendChild(row);
 
             let isCurrCandidateElected = document.createElement("td");
-            isCurrCandidateElected.textContent = candidate.elected
-                ? "Sim"
-                : "Não";
-            isCurrCandidateElected.style.backgroundColor = candidate.elected
-                ? "#30ff91"
-                : "#ff3037";
-            isCurrCandidateElected.style.color = candidate.elected
-                ? "#000000"
-                : "#FFFFFF";
+
+            if (candidate.elected) {
+                isCurrCandidateElected.textContent = "Sim";
+                isCurrCandidateElected.style.backgroundColor = "#30ff91";
+                isCurrCandidateElected.style.color = "#000000";
+            } else if (candidate.matematicamente) {
+                isCurrCandidateElected.textContent = "Matematicamente";
+                isCurrCandidateElected.style.backgroundColor = "#fde910";
+                isCurrCandidateElected.style.color = "#000000";
+            } else if (!candidate.elected) {
+                isCurrCandidateElected.textContent = "Não";
+                isCurrCandidateElected.style.backgroundColor = "#ff3037";
+                isCurrCandidateElected.style.color = "#FFFFFF";
+            }
+
             row.appendChild(isCurrCandidateElected);
             table.appendChild(row);
         });
@@ -268,9 +274,58 @@ function generateNullVotesTable(data) {
 }
 
 function checkElected(data) {
-    let elected = data.candidates.filter((c) => c.elected);
+    if (data.candidates.filter((c) => c.elected).length > 0) {
+        return "eleito";
+    } else if (data.candidates.filter((c) => c.matematicamente).length > 0) {
+        return "matematicamente";
+    } else {
+        return false;
+    }
+}
 
-    return elected.length > 0;
+function matematicamenteEleito(data) {
+    if (data.role == "vereador") {
+        return;
+    }
+
+    let urnasApuradas = parseFloat(data.as.replace(",", "."));
+    let candidates = data.candidates.sort((a, b) => b.votes - a.votes);
+    let eleitores = parseInt(data.dadosFixos.br.uf[0].mun[0].e);
+
+    // => Votos totais
+    let votesArray = [];
+    for (let i = 0; i < candidates.length; i++) {
+        votesArray.push(candidates[i].votes);
+    }
+
+    let totalVotes = votesArray.reduce((a, b) => a + b);
+
+    if (totalVotes <= 0) {
+        return;
+    }
+
+    let firstPlacePercentage = (candidates[0].votes * 100) / totalVotes;
+    let secondPlacePercentage = (candidates[1].votes * 100) / totalVotes;
+
+    if (eleitores > 200000) {
+        // Pode ter segundo turno
+        if (
+            100 - urnasApuradas < 50 - firstPlacePercentage &&
+            !(firstPlacePercentage < 50)
+        ) {
+            candidates[0].matematicamente = true; // ELEITO EM 1º TURNO
+        }
+    } else {
+        // Não tem segundo turno
+        if (
+            !(
+                100 - urnasApuradas + secondPlacePercentage >
+                firstPlacePercentage
+            )
+        ) {
+            candidates[0].matematicamente = true; // ELEITO POR NÃO TER COMO O 2º GANHAR E CONSEQUENTEMENTE OS OUTROS
+        }
+    }
 }
 
 async function parseDataObject(data) {
@@ -319,6 +374,8 @@ async function parseDataObject(data) {
         } else if (String(candidate.e) == "N") {
             obj.candidates[obj.candidates.length - 1].elected = false;
         }
+        
+        obj.candidates[obj.candidates.length - 1].matematicamente = false;
 
         obj.candidates[obj.candidates.length - 1].votes = parseInt(
             candidate.vap
@@ -327,6 +384,7 @@ async function parseDataObject(data) {
         obj.candidates[obj.candidates.length - 1].seq = candidate.seq;
     });
 
+    matematicamenteEleito(obj);
     obj.candidates = obj.candidates.sort((a, b) => b.vap - a.vap);
 
     return obj;
