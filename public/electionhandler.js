@@ -355,6 +355,9 @@ async function parseDataObject(data) {
     // => Dados fixos
     obj.dadosFixos = await getFixedFile(data.nadf);
 
+    // Unidade da Federação
+    obj.uf = obj.dadosFixos.br.uf[0].sg.toLowerCase();
+
     //Candidatos e votos
     obj.candidates = [];
     data.abr[0].cand.forEach((candidate) => {
@@ -368,13 +371,19 @@ async function parseDataObject(data) {
             String(candidate.n),
             obj.dadosFixos
         );
+
+        obj.candidates[obj.candidates.length - 1].sqcand = getSqcandByNumber(
+            String(candidate.n),
+            obj.dadosFixos
+        );
+
         // VOTOS .......
         if (String(candidate.e) == "S") {
             obj.candidates[obj.candidates.length - 1].elected = true;
         } else if (String(candidate.e) == "N") {
             obj.candidates[obj.candidates.length - 1].elected = false;
         }
-        
+
         obj.candidates[obj.candidates.length - 1].matematicamente = false;
 
         obj.candidates[obj.candidates.length - 1].votes = parseInt(

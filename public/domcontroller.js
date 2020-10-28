@@ -18,8 +18,8 @@ const cities = [
     // "Nova Friburgo",
     // "Cabo Frio",
     // "Rio das Ostras",
-    "Dourados",
-    "Três Lagoas",
+    { name: "Dourados", uf: "ms" },
+    { name: "Três Lagoas", uf: "ms" },
 ].sort();
 
 const cityDOM = document.querySelector("#city");
@@ -90,9 +90,9 @@ async function toggleElectionFeed() {
 // On page load ====
 cities.forEach((city) => {
     let currCityOption = document.createElement("option");
-    currCityOption.id = city.replaceAll(" ", "-").toLowerCase();
-    currCityOption.value = city.toUpperCase();
-    currCityOption.textContent = city.toUpperCase();
+    currCityOption.id = city.name.replaceAll(" ", "-").toLowerCase();
+    currCityOption.value = city.name.toUpperCase();
+    currCityOption.textContent = city.name.toUpperCase();
     cityDOM.appendChild(currCityOption);
 });
 

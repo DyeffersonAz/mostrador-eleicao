@@ -14,17 +14,16 @@ function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function getVariableFile(city, role) {
+async function getVariableFile(city, uf, role) {
     // IR AO TSE
     console.log(`Pegando arquivo da eleição de ${city} para ${role}`);
     let cityCode = await getCityCode(city);
     const roleCode = String(roleStringToRoleCode(role)).padStart(4, "0");
-    const uf = await getCityUF(city);
     const filepath = `${host}/${ciclo}/divulgacao/${ambiente}/${codigo_eleicao}/dados/${uf}/${uf}${cityCode}-c${roleCode}-e${codigo_eleicao.padStart(
         6,
         "0"
     )}-v.json`;
-    let raw_file = await fetch(`fetch/${filepath}`, {
+    let raw_file = await fetch(`fetchJSON/${filepath}`, {
         // mode: "no-cors",
         "Content-Type": "application/json",
         Accept: "application/json",
@@ -32,7 +31,7 @@ async function getVariableFile(city, role) {
 
     if (raw_file.status == 429) {
         await sleep(1000);
-        raw_file = await fetch(`fetch/${filepath}`, {
+        raw_file = await fetch(`fetchJSON/${filepath}`, {
             "Content-Type": "application/json",
             Accept: "application/json",
         });
@@ -48,14 +47,14 @@ async function getFixedFile(filename) {
         2
     )}/${filename}.json`;
 
-    let raw_file = await fetch(`fetch/${filepath}`, {
+    let raw_file = await fetch(`fetchJSON/${filepath}`, {
         "Content-Type": "application/json",
         Accept: "application/json",
     });
 
     if (raw_file.status == 429) {
         await sleep(1000);
-        raw_file = await fetch(`fetch/${filepath}`, {
+        raw_file = await fetch(`fetchJSON/${filepath}`, {
             "Content-Type": "application/json",
             Accept: "application/json",
         });
@@ -69,37 +68,40 @@ async function getFiles() {
     let electedCache = await JSON.parse(localStorage.getItem("elected"));
 
     for (let city of cities) {
-        let prefeito = await getVariableFile(city, "prefeito");
-        let vereador = await getVariableFile(city, "vereador");
+        let prefeito = await getVariableFile(city.name, city.uf, "prefeito");
+        let vereador = await getVariableFile(city.name, city.uf, "vereador");
 
         prefeito = await parseDataObject(prefeito);
         vereador = await parseDataObject(vereador);
 
-        fileCache[`${city.toLowerCase()}_prefeito`] = prefeito;
-        fileCache[`${city.toLowerCase()}_vereador`] = vereador;
+        fileCache[`${city.name.toLowerCase()}_prefeito`] = prefeito;
+        fileCache[`${city.name.toLowerCase()}_vereador`] = vereador;
 
         // => PREFEITO
-        if (!electedCache.includes(`${city.toLowerCase()}_prefeito`)) {
+        if (!electedCache.includes(`${city.name.toLowerCase()}_prefeito`)) {
             if (checkElected(prefeito) == "eleito") {
-                electedCache.push(`${city.toLowerCase()}_prefeito`);
+                electedCache.push(`${city.name.toLowerCase()}_prefeito`);
                 notifyElection("ELEIÇÃO!", `Prefeito(a) eleito(a) em ${city}`);
             } else if (checkElected(prefeito) == "matematicamente") {
                 notifyMatematicamente(
                     "MATEMATICAMENTE ELEITO!",
-                    `Prefeito(a) matematicamente eleito(a) em ${city}. Resta aguardar ainda se o TSE vai considerar eleito(a) ou não.`
+                    `Prefeito(a) matematicamente eleito(a) em ${city.name}. Resta aguardar ainda se o TSE vai considerar eleito(a) ou não.`
                 );
             }
         }
 
         // => VEREADOR
-        if (!electedCache.includes(`${city.toLowerCase()}_vereador`)) {
+        if (!electedCache.includes(`${city.name.toLowerCase()}_vereador`)) {
             if (checkElected(vereador) == "eleito") {
-                electedCache.push(`${city.toLowerCase()}_vereador`);
-                notifyElection("ELEIÇÃO!", `Vereador(a) eleito(a) em ${city}`);
+                electedCache.push(`${city.name.toLowerCase()}_vereador`);
+                notifyElection(
+                    "ELEIÇÃO!",
+                    `Vereador(a) eleito(a) em ${city.name}`
+                );
             } else if (checkElected(vereador) == "matematicamente") {
                 notifyMatematicamente(
                     "MATEMATICAMENTE ELEITO!",
-                    `Vereador(a) matematicamente eleito(a) em ${city}. Resta aguardar ainda se o TSE vai considerar eleito(a) ou não.`
+                    `Vereador(a) matematicamente eleito(a) em ${city.name}. Resta aguardar ainda se o TSE vai considerar eleito(a) ou não.`
                 );
             }
         }
@@ -142,7 +144,21 @@ function getPartyByNumber(number, fixedFile) {
     }
 }
 
-async function getCityCode(city) {
+function getSqcandByNumber(number, fixedFile) {
+    // NO AGUARDO DO TSE
+    let coligacoes = fixedFile.carg.col;
+    for (let col of coligacoes) {
+        for (let par of col.par) {
+            for (let cand of par.cand) {
+                if (cand.n == number) {
+                    return cand.sqcand;
+                }
+            }
+        }
+    }
+}
+
+async function getCityCode(city, uf) {
     let codesDB = await fetch(
         "https://raw.githubusercontent.com/betafcc/Municipios-Brasileiros-TSE/master/municipios_brasileiros_tse.json"
     );
@@ -164,17 +180,6 @@ async function getCityByCode(cityCode) {
     let cityName = DBCity.nome_municipio;
 
     return cityName;
-}
-
-async function getCityUF(city) {
-    let raw_data = await fetch(
-        "https://raw.githubusercontent.com/betafcc/Municipios-Brasileiros-TSE/master/municipios_brasileiros_tse.json"
-    );
-    let json_data = await raw_data.json();
-    let municipio = json_data.filter(
-        (o) => o.nome_municipio == String(city).toUpperCase()
-    )[0];
-    return municipio.uf.toLowerCase();
 }
 
 function roleCodeToRoleString(roleCode) {
