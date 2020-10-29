@@ -20,6 +20,10 @@ const cities = [
     // "Rio das Ostras",
     { name: "Dourados", uf: "ms" },
     { name: "Três Lagoas", uf: "ms" },
+    { name: "Campo Grande", uf: "ms" },
+    { name: "Porto Velho", uf: "ro" },
+    { name: "São Luiz", uf: "rr" },
+    { name: "Taquarussu", uf: "ms" },
 ].sort();
 
 const cityDOM = document.querySelector("#city");

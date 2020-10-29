@@ -236,6 +236,17 @@ function generateCandTable(data) {
             }
 
             row.appendChild(isCurrCandidateElected);
+            if (candidate.seq <= 25) {
+                let candidatePicture = document.createElement("img");
+                candidatePicture.id = `imagem${candidate.sqcand}`;
+                candidatePicture.className = "candidatePicture";
+                candidatePicture.src = provideImageLink(
+                    candidate.sqcand,
+                    data.uf
+                );
+                row.appendChild(candidatePicture);
+            }
+
             table.appendChild(row);
         });
 

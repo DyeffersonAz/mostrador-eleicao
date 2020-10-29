@@ -16,10 +16,12 @@ function sleep(ms) {
 
 async function getVariableFile(city, uf, role) {
     // IR AO TSE
-    console.log(`Pegando arquivo da eleição de ${city} para ${role}`);
-    let cityCode = await getCityCode(city);
+    console.log(`Pegando arquivo da eleição de ${city.name} para ${role}`);
+    let cityCode = await getCityCode(city, uf);
     const roleCode = String(roleStringToRoleCode(role)).padStart(4, "0");
-    const filepath = `${host}/${ciclo}/divulgacao/${ambiente}/${codigo_eleicao}/dados/${uf}/${uf}${cityCode}-c${roleCode}-e${codigo_eleicao.padStart(
+    const filepath = `${host}/${ciclo}/divulgacao/${ambiente}/${codigo_eleicao}/dados/${uf}/${uf}${String(
+        cityCode
+    ).padStart(5, "0")}-c${roleCode}-e${codigo_eleicao.padStart(
         6,
         "0"
     )}-v.json`;
@@ -68,8 +70,8 @@ async function getFiles() {
     let electedCache = await JSON.parse(localStorage.getItem("elected"));
 
     for (let city of cities) {
-        let prefeito = await getVariableFile(city.name, city.uf, "prefeito");
-        let vereador = await getVariableFile(city.name, city.uf, "vereador");
+        let prefeito = await getVariableFile(city, city.uf, "prefeito");
+        let vereador = await getVariableFile(city, city.uf, "vereador");
 
         prefeito = await parseDataObject(prefeito);
         vereador = await parseDataObject(vereador);
@@ -81,7 +83,10 @@ async function getFiles() {
         if (!electedCache.includes(`${city.name.toLowerCase()}_prefeito`)) {
             if (checkElected(prefeito) == "eleito") {
                 electedCache.push(`${city.name.toLowerCase()}_prefeito`);
-                notifyElection("ELEIÇÃO!", `Prefeito(a) eleito(a) em ${city}`);
+                notifyElection(
+                    "ELEIÇÃO!",
+                    `Prefeito(a) eleito(a) em ${city.name}`
+                );
             } else if (checkElected(prefeito) == "matematicamente") {
                 notifyMatematicamente(
                     "MATEMATICAMENTE ELEITO!",
@@ -116,6 +121,13 @@ function getStoredFile(city, role) {
     return fileCache[`${city.toLowerCase()}_${role}`];
 }
 
+function provideImageLink(sqCand, uf) {
+    // https://divulgacao-resultados.tse.jus.br/ele2020/divulgacao/homologacaotre/7555/fotos/br/280000731765.jpeg
+
+    const imageHost = "https://divulgacao-resultados.tse.jus.br";
+    return `/fetchImage/${host}/${ciclo}/divulgacao/${ambiente}/${codigo_eleicao}/fotos/${uf}/${sqCand}.jpeg`
+}
+
 function getCandidateByNumber(number, fixedFile) {
     // NO AGUARDO DO TSE
     let coligacoes = fixedFile.carg.col;
@@ -123,7 +135,7 @@ function getCandidateByNumber(number, fixedFile) {
         for (let party of colig.par) {
             for (let candidate of party.cand) {
                 if (candidate.n == number) {
-                    return candidate.nm;
+                    return candidate.nmu;
                 }
             }
         }
@@ -164,7 +176,9 @@ async function getCityCode(city, uf) {
     );
     let codesDBJSON = await codesDB.json();
     let DBCity = codesDBJSON.filter(
-        (elt) => elt.nome_municipio == city.toUpperCase()
+        (elt) =>
+            elt.nome_municipio == city.name.toUpperCase() &&
+            elt.uf == uf.toUpperCase()
     )[0];
     let cityCode = DBCity.codigo_tse;
 

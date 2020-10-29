@@ -21,14 +21,17 @@
     width: 100%;
 }
 
+.candidatePicture {
+    height: 5em;
+}
+
+.candidatePicture:hover {
+    height: 200px;
+}
+
 table {
     text-align: center;
     margin: auto;
-}
-
-table tr {
-    border-top: 2px solid gray;
-    border-bottom: 2px solid gray;
 }
 
 table tr td {
@@ -36,7 +39,9 @@ table tr td {
     border-right: 2px solid gray;
     padding-right: 0.4em;
     padding-left: 0.4em;
+    border: 2px solid gray;
 }
+
 table tr th {
     border: 2px solid gray;
     background-color: azure;
