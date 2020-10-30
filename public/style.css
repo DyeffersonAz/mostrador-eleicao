@@ -1,5 +1,23 @@
+body {
+    background-image: url("images/background.gif");
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
+
+form {
+    background-color: rgba(250, 250, 250, 0.65);
+    border-bottom-right-radius: 10px;
+    display: inline-block;
+    padding: 10px;
+}
+
 #graphs {
     display: grid;
+    background-color: rgba(250, 250, 250, 0.9);
+    border-radius: 5px;
+    margin: 1.5em;
+    padding: 1em;
 }
 #candTable {
     grid-column: 3;
@@ -22,11 +40,14 @@
 }
 
 .candidatePicture {
-    height: 5em;
+    height: 4.8em;
+    transition: all 0.4s ease-in-out;
 }
 
 .candidatePicture:hover {
     height: 200px;
+    margin-left: 20px;
+    transform: scale(1.1);
 }
 
 table {
@@ -40,6 +61,8 @@ table tr td {
     padding-right: 0.4em;
     padding-left: 0.4em;
     border: 2px solid gray;
+    background-color: rgb(250, 250, 250);
+    line-height: 1em;
 }
 
 table tr th {
@@ -47,6 +70,11 @@ table tr th {
     background-color: azure;
     padding-right: 0.4em;
     padding-left: 0.4em;
+}
+
+.candidatePercentage {
+    font-weight: bold;
+    font-size: 5%;
 }
 
 canvas {

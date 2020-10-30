@@ -38,16 +38,19 @@ app.get("/fetchJSON/*", async (req, res) => {
 });
 
 app.get("/fetchImage/*", async (req, res) => {
-    console.log("Pegando IMAGEM: " + req.params[0]);
+    
     let filename = `imagecache/${req.params[0].split("/").reverse()[0]}`;
 
     if (!fs.existsSync(filename)) {
+        console.log("Baixando IMAGEM: " + req.params[0]);
         let response = await fetch(req.params[0]);
 
         if (response.ok) {
             await streamPipeline(response.body, fs.createWriteStream(filename));
         }
     }
+
+    console.log("Enviando IMAGEM: " + filename);
 
     res.sendFile(filename, { root: __dirname });
 });

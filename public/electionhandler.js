@@ -63,13 +63,17 @@ async function plotVotesPerCandidate(data) {
                             let label =
                                 data.datasets[0].data[tooltipItem.index];
 
-                            label = `≅ ${Math.round(
-                                (parseInt(votesArray[tooltipItem.index]) *
-                                    100) /
+                            label = `≅ ${String(
+                                (
+                                    (parseInt(votesArray[tooltipItem.index]) *
+                                        100) /
                                     votesArray.reduce(function (a, b) {
                                         return a + b;
                                     })
-                            )}% dos votos (${votesArray[tooltipItem.index]})`;
+                                ).toFixed(2)
+                            ).replace(".", ",")}% dos votos (${
+                                votesArray[tooltipItem.index]
+                            })`;
                             return label;
                         },
                     },
@@ -103,13 +107,17 @@ async function plotVotesPerCandidate(data) {
                             let label =
                                 data.datasets[0].data[tooltipItem.index];
 
-                            label = `≅ ${Math.round(
-                                (parseInt(votesArray[tooltipItem.index]) *
-                                    100) /
+                            label = `≅ ${String(
+                                (
+                                    (parseInt(votesArray[tooltipItem.index]) *
+                                        100) /
                                     votesArray.reduce(function (a, b) {
                                         return a + b;
                                     })
-                            )}% dos votos (${votesArray[tooltipItem.index]})`;
+                                ).toFixed(2)
+                            ).replace(".", ",")}% dos votos (${
+                                votesArray[tooltipItem.index]
+                            })`;
                             return label;
                         },
                     },
@@ -171,6 +179,12 @@ function generateCandTable(data) {
         document.querySelector("#candTable").remove();
     }
 
+    let votesArray = [];
+
+    for (let i = 0; i < data.candidates.length; i++) {
+        votesArray.push(data.candidates[i].votes);
+    }
+
     let table = document.createElement("table");
     table.className = "table-responsive";
     table.id = "candTable";
@@ -216,6 +230,22 @@ function generateCandTable(data) {
 
             let currCandidateVotes = document.createElement("td");
             currCandidateVotes.textContent = candidate.votes;
+
+            let currCandidatePercentage = String(
+                (
+                    (parseInt(candidate.votes) * 100) /
+                    votesArray.reduce(function (a, b) {
+                        return a + b;
+                    })
+                ).toFixed(2)
+            ).replace(".", ",");
+
+            let currCandidatePercentageSpan = document.createElement("span");
+            currCandidatePercentageSpan.className = "candidatePercentage";
+            currCandidatePercentageSpan.textContent = ` (${currCandidatePercentage}%)`;
+            currCandidateVotes.appendChild(document.createElement("br"));
+            currCandidateVotes.appendChild(currCandidatePercentageSpan);
+
             row.appendChild(currCandidateVotes);
             table.appendChild(row);
 
