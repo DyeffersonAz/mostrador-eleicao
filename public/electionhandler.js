@@ -381,6 +381,14 @@ function matematicamenteEleito(data) {
         ) {
             candidates[0].matematicamente = true; // ELEITO EM 1º TURNO
         }
+
+        if (!(
+            100 - urnasApuradas + secondPlacePercentage >
+            firstPlacePercentage
+        ) && !(100 - urnasApuradas < 50 - firstPlacePercentage)) {
+            candidates[0].matematicamente = true;
+            candidates[1].matematicamente = true;
+        }
     } else {
         // Não tem segundo turno
         if (
