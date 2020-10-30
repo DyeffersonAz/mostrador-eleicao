@@ -31,6 +31,17 @@ async function plotVotesPerCandidate(data) {
         names.push(candidates[i].name);
     }
 
+    let graphVotes = votesArray;
+
+    let maxCandidates = 20;
+    if (votesArray.length > maxCandidates) {
+        let others = votesArray.slice(maxCandidates-1).reduce((a, b) => a + b);
+        names = names.slice(0, maxCandidates-1);
+        //names.push("Outros");
+        graphVotes = votesArray.slice(0, maxCandidates-1);
+        //votesArray.push(others);
+    }
+
     if (names.length <= 0) {
         return;
     }
@@ -43,7 +54,7 @@ async function plotVotesPerCandidate(data) {
             data: {
                 datasets: [
                     {
-                        data: votesArray,
+                        data: graphVotes,
                         backgroundColor: generateColors(
                             Object.keys(data.candidates).length
                         ),
@@ -63,16 +74,19 @@ async function plotVotesPerCandidate(data) {
                             let label =
                                 data.datasets[0].data[tooltipItem.index];
 
-                            label = `≅ ${String(
+                            let percentage = 
                                 (
-                                    (parseInt(votesArray[tooltipItem.index]) *
+                                    (parseInt(graphVotes[tooltipItem.index]) *
                                         100) /
                                     votesArray.reduce(function (a, b) {
                                         return a + b;
                                     })
                                 ).toFixed(2)
-                            ).replace(".", ",")}% dos votos (${
-                                votesArray[tooltipItem.index]
+                            
+                            percentage = percentage == NaN ? 0 : percentage
+                            
+                            label = `≅ ${String(percentage).replace(".", ",")}% dos votos (${
+                                graphVotes[tooltipItem.index]
                             })`;
                             return label;
                         },
@@ -82,11 +96,11 @@ async function plotVotesPerCandidate(data) {
         });
     } else if (names.length > 4) {
         let graph = new Chart(document.getElementById("votesPerCandidate"), {
-            type: "bar",
+            type: "horizontalBar",
             data: {
                 datasets: [
                     {
-                        data: votesArray,
+                        data: graphVotes,
                         backgroundColor: generateColors(data.candidates.length),
                     },
                 ],
@@ -107,21 +121,31 @@ async function plotVotesPerCandidate(data) {
                             let label =
                                 data.datasets[0].data[tooltipItem.index];
 
-                            label = `≅ ${String(
+                            let percentage = 
                                 (
-                                    (parseInt(votesArray[tooltipItem.index]) *
+                                    (parseInt(graphVotes[tooltipItem.index]) *
                                         100) /
                                     votesArray.reduce(function (a, b) {
                                         return a + b;
                                     })
                                 ).toFixed(2)
-                            ).replace(".", ",")}% dos votos (${
-                                votesArray[tooltipItem.index]
+                            
+                            percentage = percentage == NaN ? 0 : percentage
+                            
+                            label = `≅ ${String(percentage).replace(".", ",")}% dos votos (${
+                                graphVotes[tooltipItem.index]
                             })`;
                             return label;
                         },
                     },
                 },
+                scales: {
+                    xAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
             },
         });
     }
@@ -214,8 +238,6 @@ function generateCandTable(data) {
 
     // ==> Creating the actual rows
     data.candidates
-        .sort((a, b) => a.votes - b.votes)
-        .reverse()
         .forEach((candidate) => {
             let row = document.createElement("tr");
             table.appendChild(row);
@@ -231,18 +253,21 @@ function generateCandTable(data) {
             let currCandidateVotes = document.createElement("td");
             currCandidateVotes.textContent = candidate.votes;
 
-            let currCandidatePercentage = String(
+            let currCandidatePercentage =
                 (
                     (parseInt(candidate.votes) * 100) /
                     votesArray.reduce(function (a, b) {
                         return a + b;
                     })
-                ).toFixed(2)
-            ).replace(".", ",");
+                ).toFixed(2);
+            
+            if (currCandidatePercentage === NaN) {
+                currCandidatePercentage = 0;
+            }
 
             let currCandidatePercentageSpan = document.createElement("span");
             currCandidatePercentageSpan.className = "candidatePercentage";
-            currCandidatePercentageSpan.textContent = ` (${currCandidatePercentage}%)`;
+            currCandidatePercentageSpan.textContent = ` (${String(currCandidatePercentage).replace(".", ",")}%)`;
             currCandidateVotes.appendChild(document.createElement("br"));
             currCandidateVotes.appendChild(currCandidatePercentageSpan);
 
@@ -435,7 +460,7 @@ async function parseDataObject(data) {
     });
 
     matematicamenteEleito(obj);
-    obj.candidates = obj.candidates.sort((a, b) => b.vap - a.vap);
+    obj.candidates = obj.candidates.sort((a, b) => b.seq - a.seq);
 
     return obj;
 
