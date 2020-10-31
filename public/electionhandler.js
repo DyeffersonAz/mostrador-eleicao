@@ -11,6 +11,10 @@ function generateColors(qnt) {
     return colors;
 }
 
+function numberWithPeriods(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
 async function plotVotesPerCandidate(data) {
     //console.log(data);
     if (document.getElementById("votesPerCandidate")) {
@@ -254,7 +258,7 @@ function generateCandTable(data) {
         row.appendChild(partyAbbr);
 
         let currCandidateVotes = document.createElement("td");
-        currCandidateVotes.textContent = candidate.votes;
+        currCandidateVotes.textContent = numberWithPeriods(candidate.votes);
 
         let currCandidatePercentage = (
             (parseInt(candidate.votes) * 100) /
