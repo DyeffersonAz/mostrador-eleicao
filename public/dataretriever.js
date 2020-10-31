@@ -125,7 +125,7 @@ function provideImageLink(sqCand, uf) {
     // https://divulgacao-resultados.tse.jus.br/ele2020/divulgacao/homologacaotre/7555/fotos/br/280000731765.jpeg
 
     const imageHost = "https://divulgacao-resultados.tse.jus.br";
-    return `/fetchImage/${host}/${ciclo}/divulgacao/${ambiente}/${codigo_eleicao}/fotos/${uf}/${sqCand}.jpeg`
+    return `/fetchImage/${host}/${ciclo}/divulgacao/${ambiente}/${codigo_eleicao}/fotos/${uf}/${sqCand}.jpeg`;
 }
 
 function getCandidateByNumber(number, fixedFile) {

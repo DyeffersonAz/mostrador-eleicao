@@ -35,10 +35,12 @@ async function plotVotesPerCandidate(data) {
 
     let maxCandidates = 20;
     if (votesArray.length > maxCandidates) {
-        let others = votesArray.slice(maxCandidates-1).reduce((a, b) => a + b);
-        names = names.slice(0, maxCandidates-1);
+        let others = votesArray
+            .slice(maxCandidates - 1)
+            .reduce((a, b) => a + b);
+        names = names.slice(0, maxCandidates - 1);
         //names.push("Outros");
-        graphVotes = votesArray.slice(0, maxCandidates-1);
+        graphVotes = votesArray.slice(0, maxCandidates - 1);
         //votesArray.push(others);
     }
 
@@ -74,20 +76,20 @@ async function plotVotesPerCandidate(data) {
                             let label =
                                 data.datasets[0].data[tooltipItem.index];
 
-                            let percentage = 
-                                (
-                                    (parseInt(graphVotes[tooltipItem.index]) *
-                                        100) /
-                                    votesArray.reduce(function (a, b) {
-                                        return a + b;
-                                    })
-                                ).toFixed(2)
-                            
-                            percentage = percentage == NaN ? 0 : percentage
-                            
-                            label = `≅ ${String(percentage).replace(".", ",")}% dos votos (${
-                                graphVotes[tooltipItem.index]
-                            })`;
+                            let percentage = (
+                                (parseInt(graphVotes[tooltipItem.index]) *
+                                    100) /
+                                votesArray.reduce(function (a, b) {
+                                    return a + b;
+                                })
+                            ).toFixed(2);
+
+                            percentage = percentage == NaN ? 0 : percentage;
+
+                            label = `≅ ${String(percentage).replace(
+                                ".",
+                                ","
+                            )}% dos votos (${graphVotes[tooltipItem.index]})`;
                             return label;
                         },
                     },
@@ -121,31 +123,33 @@ async function plotVotesPerCandidate(data) {
                             let label =
                                 data.datasets[0].data[tooltipItem.index];
 
-                            let percentage = 
-                                (
-                                    (parseInt(graphVotes[tooltipItem.index]) *
-                                        100) /
-                                    votesArray.reduce(function (a, b) {
-                                        return a + b;
-                                    })
-                                ).toFixed(2)
-                            
-                            percentage = percentage == NaN ? 0 : percentage
-                            
-                            label = `≅ ${String(percentage).replace(".", ",")}% dos votos (${
-                                graphVotes[tooltipItem.index]
-                            })`;
+                            let percentage = (
+                                (parseInt(graphVotes[tooltipItem.index]) *
+                                    100) /
+                                votesArray.reduce(function (a, b) {
+                                    return a + b;
+                                })
+                            ).toFixed(2);
+
+                            percentage = percentage == NaN ? 0 : percentage;
+
+                            label = `≅ ${String(percentage).replace(
+                                ".",
+                                ","
+                            )}% dos votos (${graphVotes[tooltipItem.index]})`;
                             return label;
                         },
                     },
                 },
                 scales: {
-                    xAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }]
-                }
+                    xAxes: [
+                        {
+                            ticks: {
+                                beginAtZero: true,
+                            },
+                        },
+                    ],
+                },
             },
         });
     }
@@ -237,73 +241,70 @@ function generateCandTable(data) {
     }
 
     // ==> Creating the actual rows
-    data.candidates
-        .forEach((candidate) => {
-            let row = document.createElement("tr");
-            table.appendChild(row);
+    data.candidates.forEach((candidate) => {
+        let row = document.createElement("tr");
+        table.appendChild(row);
 
-            let currCandidateName = document.createElement("td");
-            currCandidateName.textContent = candidate.name;
-            row.appendChild(currCandidateName);
+        let currCandidateName = document.createElement("td");
+        currCandidateName.textContent = candidate.name;
+        row.appendChild(currCandidateName);
 
-            let partyAbbr = document.createElement("td");
-            partyAbbr.textContent = candidate.party;
-            row.appendChild(partyAbbr);
+        let partyAbbr = document.createElement("td");
+        partyAbbr.textContent = candidate.party;
+        row.appendChild(partyAbbr);
 
-            let currCandidateVotes = document.createElement("td");
-            currCandidateVotes.textContent = candidate.votes;
+        let currCandidateVotes = document.createElement("td");
+        currCandidateVotes.textContent = candidate.votes;
 
-            let currCandidatePercentage =
-                (
-                    (parseInt(candidate.votes) * 100) /
-                    votesArray.reduce(function (a, b) {
-                        return a + b;
-                    })
-                ).toFixed(2);
-            
-            if (currCandidatePercentage === NaN) {
-                currCandidatePercentage = 0;
-            }
+        let currCandidatePercentage = (
+            (parseInt(candidate.votes) * 100) /
+            votesArray.reduce(function (a, b) {
+                return a + b;
+            })
+        ).toFixed(2);
 
-            let currCandidatePercentageSpan = document.createElement("span");
-            currCandidatePercentageSpan.className = "candidatePercentage";
-            currCandidatePercentageSpan.textContent = ` (${String(currCandidatePercentage).replace(".", ",")}%)`;
-            currCandidateVotes.appendChild(document.createElement("br"));
-            currCandidateVotes.appendChild(currCandidatePercentageSpan);
+        if (currCandidatePercentage === NaN) {
+            currCandidatePercentage = 0;
+        }
 
-            row.appendChild(currCandidateVotes);
-            table.appendChild(row);
+        let currCandidatePercentageSpan = document.createElement("span");
+        currCandidatePercentageSpan.className = "candidatePercentage";
+        currCandidatePercentageSpan.textContent = ` (${String(
+            currCandidatePercentage
+        ).replace(".", ",")}%)`;
+        currCandidateVotes.appendChild(document.createElement("br"));
+        currCandidateVotes.appendChild(currCandidatePercentageSpan);
 
-            let isCurrCandidateElected = document.createElement("td");
+        row.appendChild(currCandidateVotes);
+        table.appendChild(row);
 
-            if (candidate.elected) {
-                isCurrCandidateElected.textContent = "Sim";
-                isCurrCandidateElected.style.backgroundColor = "#30ff91";
-                isCurrCandidateElected.style.color = "#000000";
-            } else if (candidate.matematicamente) {
-                isCurrCandidateElected.textContent = "Matematicamente";
-                isCurrCandidateElected.style.backgroundColor = "#fde910";
-                isCurrCandidateElected.style.color = "#000000";
-            } else if (!candidate.elected) {
-                isCurrCandidateElected.textContent = "Não";
-                isCurrCandidateElected.style.backgroundColor = "#ff3037";
-                isCurrCandidateElected.style.color = "#FFFFFF";
-            }
+        let isCurrCandidateElected = document.createElement("td");
 
-            row.appendChild(isCurrCandidateElected);
-            if (candidate.seq <= 25) {
-                let candidatePicture = document.createElement("img");
-                candidatePicture.id = `imagem${candidate.sqcand}`;
-                candidatePicture.className = "candidatePicture";
-                candidatePicture.src = provideImageLink(
-                    candidate.sqcand,
-                    data.uf
-                );
-                row.appendChild(candidatePicture);
-            }
+        if (candidate.elected) {
+            isCurrCandidateElected.textContent = "Sim";
+            isCurrCandidateElected.style.backgroundColor = "#30ff91";
+            isCurrCandidateElected.style.color = "#000000";
+        } else if (candidate.matematicamente) {
+            isCurrCandidateElected.textContent = "Matematicamente";
+            isCurrCandidateElected.style.backgroundColor = "#fde910";
+            isCurrCandidateElected.style.color = "#000000";
+        } else if (!candidate.elected) {
+            isCurrCandidateElected.textContent = "Não";
+            isCurrCandidateElected.style.backgroundColor = "#ff3037";
+            isCurrCandidateElected.style.color = "#FFFFFF";
+        }
 
-            table.appendChild(row);
-        });
+        row.appendChild(isCurrCandidateElected);
+        if (candidate.seq <= 25) {
+            let candidatePicture = document.createElement("img");
+            candidatePicture.id = `imagem${candidate.sqcand}`;
+            candidatePicture.className = "candidatePicture";
+            candidatePicture.src = provideImageLink(candidate.sqcand, data.uf);
+            row.appendChild(candidatePicture);
+        }
+
+        table.appendChild(row);
+    });
 
     document.querySelector("#graphs").appendChild(table);
 }
@@ -372,32 +373,37 @@ function matematicamenteEleito(data) {
 
     let firstPlacePercentage = (candidates[0].votes * 100) / totalVotes;
     let secondPlacePercentage = (candidates[1].votes * 100) / totalVotes;
+    if (
+        candidates.filter((candidate) => candidate.elected == true).length <= 0
+    ) {
+        if (eleitores > 200000 && candidates.length > 2) {
+            // Pode ter segundo turno
 
-    if (eleitores > 200000) {
-        // Pode ter segundo turno
-        if (
-            100 - urnasApuradas < 50 - firstPlacePercentage &&
-            !(firstPlacePercentage < 50)
-        ) {
-            candidates[0].matematicamente = true; // ELEITO EM 1º TURNO
-        }
+            let thirdPlacePercentage = (candidates[2].votes * 100) / totalVotes;
 
-        if (!(
-            100 - urnasApuradas + secondPlacePercentage >
-            firstPlacePercentage
-        ) && !(100 - urnasApuradas < 50 - firstPlacePercentage)) {
-            candidates[0].matematicamente = true;
-            candidates[1].matematicamente = true;
-        }
-    } else {
-        // Não tem segundo turno
-        if (
-            !(
-                100 - urnasApuradas + secondPlacePercentage >
-                firstPlacePercentage
-            )
-        ) {
-            candidates[0].matematicamente = true; // ELEITO POR NÃO TER COMO O 2º GANHAR E CONSEQUENTEMENTE OS OUTROS
+            if (
+                100 - urnasApuradas < 50 - firstPlacePercentage &&
+                !(firstPlacePercentage < 50)
+            ) {
+                candidates[0].matematicamente = true; // ELEITO EM 1º TURNO
+            } else if (
+                100 - urnasApuradas + firstPlacePercentage < 50 &&
+                100 - urnasApuradas + thirdPlacePercentage <
+                    secondPlacePercentage
+            ) {
+                candidates[0].matematicamente = true;
+                candidates[1].matematicamente = true;
+            }
+        } else {
+            // Não tem segundo turno
+            if (
+                !(
+                    100 - urnasApuradas + secondPlacePercentage >
+                    firstPlacePercentage
+                )
+            ) {
+                candidates[0].matematicamente = true; // ELEITO POR NÃO TER COMO O 2º GANHAR E CONSEQUENTEMENTE OS OUTROS
+            }
         }
     }
 }

@@ -38,7 +38,6 @@ app.get("/fetchJSON/*", async (req, res) => {
 });
 
 app.get("/fetchImage/*", async (req, res) => {
-    
     let filename = `imagecache/${req.params[0].split("/").reverse()[0]}`;
 
     if (!fs.existsSync(filename)) {
