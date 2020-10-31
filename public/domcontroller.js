@@ -104,7 +104,7 @@ askNotificationPermission();
 
 getFiles();
 
-setInterval(getFiles, 300000);
+setInterval(getFiles, 150000);
 
 // GET all files 5 in 5 minutes
 
