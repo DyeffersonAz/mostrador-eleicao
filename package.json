@@ -27,5 +27,9 @@
     "http": "0.0.1-security",
     "node-fetch": "^2.6.1",
     "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.12.1",
+    "eslint-config-google": "^0.14.0"
   }
 }
