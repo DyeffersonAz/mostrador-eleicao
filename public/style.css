@@ -67,7 +67,7 @@ table tr td {
     padding-left: 0.4em;
     border: 2px solid gray;
     background-color: rgb(250, 250, 250);
-    line-height: 1em;
+    line-height: 0.7em;
 }
 
 table tr th {
@@ -110,4 +110,25 @@ canvas#urnasApuradas {
     grid-row-end: 2;
     grid-column-start: 1;
     grid-column-end: 1;
+}
+
+@media only screen and (max-width: 768px) {
+    /* For mobile phones: */
+
+    body {
+        background-image: url("images/background.gif");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+
+    #graphs {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin: 0;
+        padding-top: 2em;
+        padding-bottom: 2em;
+    }
 }
