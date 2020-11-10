@@ -9,10 +9,7 @@ function generateColors(qnt) {
 
   for (let i = 0; i < qnt; i++) {
     colors.push(
-        `rgba(${
-          Math.floor(Math.random() * 256)}, ${
-          Math.floor(Math.random() * 256)}, ${
-          Math.floor(Math.random() * 256)}, 0.8)`);
+      `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, 0.8)`);
   }
   return colors;
 }
@@ -69,41 +66,52 @@ async function plotVotesPerCandidate(data) {
   cityName = cityName.replace(/^\w/, (c) => c.toUpperCase());
   if (names.length <= 4) {
     new Chart(document.getElementById('votesPerCandidate'), {
-      type: 'pie',
+      type: 'bar',
       data: {
         datasets: [
           {
             data: graphVotes,
             backgroundColor: generateColors(Object.keys(data.candidates)
-                .length),
+              .length),
           },
         ],
 
         labels: names,
       },
       options: {
+        legend: {
+          display: false,
+        },
         title: {
           display: true,
           text: `Apuração de ${cityName} para ${data.role}`,
         },
         tooltips: {
           callbacks: {
-            label: function(tooltipItem, data) {
+            label: function (tooltipItem, data) {
               let label = data.datasets[0].data[tooltipItem.index];
               let percentage = (
                 (parseInt(graphVotes[tooltipItem.index]) * 100) /
-                votesArray.reduce(function(a, b) {
+                votesArray.reduce(function (a, b) {
                   return a + b;
                 })).toFixed(2);
 
               percentage = percentage == NaN ? 0 : percentage;
 
-              label = `≅ ${
-                String(percentage).replace('.', ',')}% dos votos (${
-                graphVotes[tooltipItem.index]})`;
+              label = `≅ ${String(percentage).replace('.', ',')}% dos votos (${graphVotes[tooltipItem.index]})`;
               return label;
             },
           },
+        },
+
+        scales: {
+          yAxes: [
+            {
+              ticks: {
+                beginAtZero: true,
+              },
+            },
+          ],
         },
       },
     });
@@ -130,20 +138,18 @@ async function plotVotesPerCandidate(data) {
         },
         tooltips: {
           callbacks: {
-            label: function(tooltipItem, data) {
+            label: function (tooltipItem, data) {
               let label = data.datasets[0].data[tooltipItem.index];
               let percentage = (
-                ( parseInt(graphVotes[tooltipItem.index]) * 100) /
-                  votesArray.reduce(function(a, b) {
-                    return a + b;
-                  } )
+                (parseInt(graphVotes[tooltipItem.index]) * 100) /
+                votesArray.reduce(function (a, b) {
+                  return a + b;
+                })
               ).toFixed(2);
 
               percentage = percentage == NaN ? 0 : percentage;
 
-              label = `≅ ${
-                String(percentage).replace('.', ',')}% dos votos (${
-                graphVotes[tooltipItem.index]})`;
+              label = `≅ ${String(percentage).replace('.', ',')}% dos votos (${graphVotes[tooltipItem.index]})`;
               return label;
             },
           },
@@ -199,7 +205,7 @@ function plotUrnasApuradas(data) {
       },
       tooltips: {
         callbacks: {
-          label: function(tooltipItem, data) {
+          label: function (tooltipItem, data) {
             let label = data.datasets[0].data[tooltipItem.index];
 
             label += '%';
@@ -271,20 +277,19 @@ function generateCandTable(data) {
 
     let currCandidatePercentage = (
       (parseInt(candidate.votes) * 100) /
-            votesArray.reduce(function(a, b) {
-              return a + b;
-            })
+      votesArray.reduce(function (a, b) {
+        return a + b;
+      })
     ).toFixed(2);
 
-    if (currCandidatePercentage === NaN) {
+    if (currCandidatePercentage == NaN) {
       currCandidatePercentage = 0;
     }
 
     const currCandidatePercentageSpan = document.createElement('span');
     currCandidatePercentageSpan.className = 'candidatePercentage';
-    currCandidatePercentageSpan.textContent = ` (${
-      String(currCandidatePercentage)
-          .replace('.', ',')}%)`;
+    currCandidatePercentageSpan.textContent = ` (${String(currCandidatePercentage)
+      .replace('.', ',')}%)`;
     currCandidateVotes.appendChild(document.createElement('br'));
     currCandidateVotes.appendChild(currCandidatePercentageSpan);
 
@@ -308,7 +313,7 @@ function generateCandTable(data) {
     }
 
     row.appendChild(isCurrCandidateElected);
-    if (candidate.seq <= 25) {
+    if (candidate.seq <= 55) {
       const candidatePicture = document.createElement('img');
       candidatePicture.id = `imagem${candidate.sqcand}`;
       candidatePicture.className = 'candidatePicture';
@@ -340,7 +345,7 @@ function generateNullVotesTable(data) {
   whiteVotesText.textContent = 'Votos Brancos';
   whiteVotes.appendChild(whiteVotesText);
   const whiteVotesNumber = document.createElement('td');
-  whiteVotesNumber.textContent = data.whiteVotes;
+  whiteVotesNumber.textContent = numberWithPeriods(data.whiteVotes);
   whiteVotes.appendChild(whiteVotesNumber);
 
   const nullVotes = document.createElement('tr');
@@ -348,7 +353,7 @@ function generateNullVotesTable(data) {
   nullVotesText.textContent = 'Votos Nulos';
   nullVotes.appendChild(nullVotesText);
   const nullVotesNumber = document.createElement('td');
-  nullVotesNumber.textContent = data.nullVotes;
+  nullVotesNumber.textContent = numberWithPeriods(data.nullVotes);
   nullVotes.appendChild(nullVotesNumber);
 
   table.appendChild(whiteVotes);
@@ -418,7 +423,7 @@ function matematicamenteEleito(data) {
     } else {
       // Não tem segundo turno
       if (!(100 - urnasApuradas + secondPlacePercentage >
-            firstPlacePercentage)) {
+        firstPlacePercentage)) {
         // ELEITO POR NÃO TER COMO O 2º GANHAR E CONSEQUENTEMENTE OS OUTROS
         candidates[0].matematicamente = true;
       }
@@ -468,12 +473,12 @@ async function parseDataObject(data) {
     obj.candidates.push({});
     obj.candidates[obj.candidates.length - 1].number = String(candidate.n);
     obj.candidates[obj.candidates.length - 1].name = getCandidateByNumber(
-        String(candidate.n), obj.dadosFixos);
+      String(candidate.n), obj.dadosFixos);
     obj.candidates[obj.candidates.length - 1].party = getPartyByNumber(
-        String(candidate.n), obj.dadosFixos);
+      String(candidate.n), obj.dadosFixos);
 
     obj.candidates[obj.candidates.length - 1].sqcand = getSqcandByNumber(
-        String(candidate.n), obj.dadosFixos);
+      String(candidate.n), obj.dadosFixos);
 
     // VOTOS .......
     if (String(candidate.e) == 'S') {

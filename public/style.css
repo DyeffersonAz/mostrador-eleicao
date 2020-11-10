@@ -13,10 +13,6 @@ form {
     padding: 10px;
 }
 
-form select {
-    text-align: center;
-}
-
 #graphs {
     display: grid;
     background-color: rgba(250, 250, 250, 0.9);
@@ -24,6 +20,7 @@ form select {
     margin: 1.5em;
     padding: 1em;
 }
+
 #candTable {
     grid-column: 3;
     grid-row-start: 1;
@@ -65,7 +62,7 @@ table tr td {
     border-right: 2px solid gray;
     padding-right: 0.4em;
     padding-left: 0.4em;
-    border: 2px solid gray;
+    border: 0.5px solid gray;
     background-color: rgb(250, 250, 250);
     line-height: 0.7em;
 }
