@@ -19,15 +19,15 @@ const cities = [
   // "Nova Friburgo",
   // "Cabo Frio",
   // "Rio das Ostras",
-  { name: 'Dourados', uf: 'ms' },
-  { name: 'Três Lagoas', uf: 'ms' },
-  { name: 'Campo Grande', uf: 'ms' },
-  { name: 'Porto Velho', uf: 'ro' },
-  { name: 'São Luiz', uf: 'rr' },
-  { name: 'Taquarussu', uf: 'ms' },
-  { name: 'Belém', uf: 'pa' },
-  { name: 'Itaocara', uf: 'rj' },
-  { name: 'Rio de Janeiro', uf: 'rj' },
+  {name: 'Dourados', uf: 'ms'},
+  {name: 'Três Lagoas', uf: 'ms'},
+  {name: 'Campo Grande', uf: 'ms'},
+  {name: 'Porto Velho', uf: 'ro'},
+  {name: 'São Luiz', uf: 'rr'},
+  {name: 'Taquarussu', uf: 'ms'},
+  {name: 'Belém', uf: 'pa'},
+  {name: 'Itaocara', uf: 'rj'},
+  {name: 'Rio de Janeiro', uf: 'rj'},
 ].sort();
 
 const cityDOM = document.querySelector('#city');
@@ -63,8 +63,8 @@ async function changedForm() {
   Object.keys(fileCache).forEach((electionName) => {
     if (fileCache[electionName].role == getRole().toLowerCase()) {
       const thisCityElement = document.getElementById(fileCache[electionName].nl
-        .replaceAll(' ', '-')
-        .toLowerCase());
+          .replaceAll(' ', '-')
+          .toLowerCase());
       if (checkElected(fileCache[electionName]) == 'eleito') {
         thisCityElement.textContent = `${fileCache[electionName].nl} ✅`;
       } else if (

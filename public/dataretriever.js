@@ -5,6 +5,19 @@ if (localStorage.getItem('elected') === null) {
   localStorage.setItem('elected', JSON.stringify([]));
 }
 
+if (localStorage.getItem('matematicamente') === null) {
+  localStorage.setItem('matematicamente', JSON.stringify([]));
+}
+
+document.onkeyup = function(e) {
+  if (e.ctrlKey && e.altKey && e.key == 'd') {
+    delete localStorage.elected;
+    delete localStorage.matematicamente;
+    fetch('/reset');
+    console.log('Cache deletado!');
+  }
+};
+
 const host = 'https://resultados.tse.jus.br/publico';
 const ciclo = 'ele2020';
 const ambiente = 'simulado';
@@ -32,13 +45,8 @@ async function getVariableFile(city, uf, role) {
   const cityCode = await getCityCode(city, uf);
   const roleCode = String(roleStringToRoleCode(role)).padStart(4, '0');
   const filepath =
-  `${
-    host}/${
-    ciclo}/divulgacao/${
-    ambiente}/${
-    codigoEleicao}/dados/${uf}/${uf}${
-    String(cityCode).padStart(5, '0')}-c${
-    roleCode}-e${codigoEleicao.padStart(6, '0')}-v.json`;
+    // eslint-disable-next-line max-len
+    `${host}/${ciclo}/divulgacao/${ambiente}/${codigoEleicao}/dados/${uf}/${uf}${String(cityCode).padStart(5, '0')}-c${roleCode}-e${codigoEleicao.padStart(6, '0')}-v.json`;
   let rawFile = await fetch(`fetchJSON/${filepath}`, {
     // mode: "no-cors",
     'Content-Type': 'application/json',
@@ -64,13 +72,8 @@ async function getVariableFile(city, uf, role) {
  */
 async function getFixedFile(filename) {
   const filepath =
-  `${
-    host}/${
-    ciclo}/divulgacao/${
-    ambiente}/${
-    codigoEleicao}/dados/${
-    filename.slice(0, 2)}/${
-    filename}.json`;
+    // eslint-disable-next-line max-len
+    `${host}/${ciclo}/divulgacao/${ambiente}/${codigoEleicao}/dados/${filename.slice(0, 2)}/${filename}.json`;
 
   let rawFile = await fetch(`fetchJSON/${filepath}`, {
     'Content-Type': 'application/json',
@@ -95,6 +98,8 @@ async function getFixedFile(filename) {
  */
 async function getFiles() {
   const electedCache = await JSON.parse(localStorage.getItem('elected'));
+  const matematicamenteCache = await JSON
+      .parse(localStorage.getItem('matematicamente'));
 
   for (const city of cities) {
     let prefeito = await getVariableFile(city, city.uf, 'prefeito');
@@ -107,36 +112,48 @@ async function getFiles() {
     fileCache[`${city.name.toLowerCase()}_vereador`] = vereador;
 
     // => PREFEITO
-    if (!electedCache.includes(`${city.name.toLowerCase()}_prefeito`)) {
-      if (checkElected(prefeito) == 'eleito') {
-        electedCache.push(`${city.name.toLowerCase()}_prefeito`);
-        notifyElection(
-            'ELEIÇÃO!', `Prefeito(a) eleito(a) em ${city.name}`);
-      } else if (checkElected(prefeito) == 'matematicamente') {
-        notifyMatematicamente(
-            'MATEMATICAMENTE ELEITO!',
-            `Prefeito(a) matematicamente eleito(a) em ${city.name
-            }. Resta aguardar ainda se o TSE vai considerar eleito(a) ou não.`);
-      }
+    if (
+      checkElected(prefeito) == 'eleito' &&
+      !electedCache.includes(`${city.name.toLowerCase()}_prefeito`)) {
+      electedCache.push(`${city.name.toLowerCase()}_prefeito`);
+      notifyElection(
+          'ELEIÇÃO!', `Prefeito(a) eleito(a) em ${city.name}`);
+    } else if (
+      checkElected(prefeito) == 'matematicamente' &&
+      !electedCache.includes(`${city.name.toLowerCase()}_prefeito`) &&
+      !matematicamenteCache.includes(`${city.name.toLowerCase()}_prefeito`)) {
+      matematicamenteCache.push(`${city.name.toLowerCase()}_prefeito`);
+      notifyMatematicamente(
+          'MATEMATICAMENTE ELEITO!',
+          `Prefeito(a) matematicamente eleito(a) em ${city.name
+          }. Resta aguardar ainda se o TSE vai considerar eleito(a) ou não.`);
     }
 
     // => VEREADOR
-    if (!electedCache.includes(`${city.name.toLowerCase()}_vereador`)) {
-      if (checkElected(vereador) == 'eleito') {
-        electedCache.push(`${city.name.toLowerCase()}_vereador`);
-        notifyElection(
-            'ELEIÇÃO!', `Vereador(a) eleito(a) em ${city.name}`);
-      } else if (checkElected(vereador) == 'matematicamente') {
-        notifyMatematicamente(
-            'MATEMATICAMENTE ELEITO!',
-            `Vereador(a) matematicamente eleito(a) em ${city.name
-            }. Resta aguardar ainda se o TSE vai considerar eleito(a) ou não.`);
-      }
+    if (
+      checkElected(vereador) == 'eleito' &&
+    !electedCache.includes(`${city.name.toLowerCase()}_vereador`)) {
+      electedCache.push(`${city.name.toLowerCase()}_vereador`);
+      notifyElection(
+          'ELEIÇÃO!', `vereador(a) eleito(a) em ${city.name}`);
+    } else if (
+      checkElected(vereador) == 'matematicamente' &&
+      !electedCache.includes(`${city.name.toLowerCase()}_vereador`) &&
+      !matematicamenteCache.includes(`${city.name.toLowerCase()}_vereador`)) {
+      matematicamenteCache.push(`${city.name.toLowerCase()}_vereador`);
+      notifyMatematicamente(
+          'MATEMATICAMENTE ELEITO!',
+          `Vereador(a) matematicamente eleito(a) em ${city.name
+          }. Resta aguardar ainda se o TSE vai considerar eleito(a) ou não.`);
     }
   }
   console.log(fileCache);
   localStorage.setItem('elected', JSON.stringify(electedCache));
-  console.log(localStorage.getItem('elected'));
+  localStorage.setItem('matematicamente', JSON.stringify(matematicamenteCache));
+  console.log(`ELEITOS: ${JSON.stringify(localStorage.elected)}`);
+  console.log(`MATEMATICAMENTE: ${
+    JSON.stringify(localStorage.matematicamente)
+  }`);
   changedForm();
 }
 
@@ -159,11 +176,8 @@ function getStoredFile(city, role) {
 function provideImageLink(sqCand, uf) {
   // https://divulgacao-resultados.tse.jus.br/ele2020/divulgacao/homologacaotre/7555/fotos/br/280000731765.jpeg
 
-  return `/fetchImage/${
-    host}/${
-    ciclo}/divulgacao/${
-    ambiente}/${
-    codigoEleicao}/fotos/${uf}/${sqCand}.jpeg`;
+  // eslint-disable-next-line max-len
+  return `/fetchImage/${host}/${ciclo}/divulgacao/${ambiente}/${codigoEleicao}/fotos/${uf}/${sqCand}.jpeg`;
 }
 
 /**
@@ -239,7 +253,7 @@ async function getCityCode(city, uf) {
   const DBCity = codesDBJSON.filter(
       (elt) =>
         elt.nome_municipio == city.name.toUpperCase() &&
-        elt.uf == uf.toUpperCase())[0];
+      elt.uf == uf.toUpperCase())[0];
   const cityCode = DBCity.codigo_tse;
 
   return cityCode;

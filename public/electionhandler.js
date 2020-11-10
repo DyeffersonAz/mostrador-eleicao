@@ -9,7 +9,8 @@ function generateColors(qnt) {
 
   for (let i = 0; i < qnt; i++) {
     colors.push(
-      `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, 0.8)`);
+        // eslint-disable-next-line max-len
+        `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, 0.8)`);
   }
   return colors;
 }
@@ -72,7 +73,7 @@ async function plotVotesPerCandidate(data) {
           {
             data: graphVotes,
             backgroundColor: generateColors(Object.keys(data.candidates)
-              .length),
+                .length),
           },
         ],
 
@@ -88,16 +89,17 @@ async function plotVotesPerCandidate(data) {
         },
         tooltips: {
           callbacks: {
-            label: function (tooltipItem, data) {
+            label: function(tooltipItem, data) {
               let label = data.datasets[0].data[tooltipItem.index];
               let percentage = (
                 (parseInt(graphVotes[tooltipItem.index]) * 100) /
-                votesArray.reduce(function (a, b) {
+                votesArray.reduce(function(a, b) {
                   return a + b;
                 })).toFixed(2);
 
               percentage = percentage == NaN ? 0 : percentage;
 
+              // eslint-disable-next-line max-len
               label = `≅ ${String(percentage).replace('.', ',')}% dos votos (${graphVotes[tooltipItem.index]})`;
               return label;
             },
@@ -138,17 +140,18 @@ async function plotVotesPerCandidate(data) {
         },
         tooltips: {
           callbacks: {
-            label: function (tooltipItem, data) {
+            label: function(tooltipItem, data) {
               let label = data.datasets[0].data[tooltipItem.index];
               let percentage = (
                 (parseInt(graphVotes[tooltipItem.index]) * 100) /
-                votesArray.reduce(function (a, b) {
+                votesArray.reduce(function(a, b) {
                   return a + b;
                 })
               ).toFixed(2);
 
               percentage = percentage == NaN ? 0 : percentage;
 
+              // eslint-disable-next-line max-len
               label = `≅ ${String(percentage).replace('.', ',')}% dos votos (${graphVotes[tooltipItem.index]})`;
               return label;
             },
@@ -205,7 +208,7 @@ function plotUrnasApuradas(data) {
       },
       tooltips: {
         callbacks: {
-          label: function (tooltipItem, data) {
+          label: function(tooltipItem, data) {
             let label = data.datasets[0].data[tooltipItem.index];
 
             label += '%';
@@ -277,7 +280,7 @@ function generateCandTable(data) {
 
     let currCandidatePercentage = (
       (parseInt(candidate.votes) * 100) /
-      votesArray.reduce(function (a, b) {
+      votesArray.reduce(function(a, b) {
         return a + b;
       })
     ).toFixed(2);
@@ -288,8 +291,8 @@ function generateCandTable(data) {
 
     const currCandidatePercentageSpan = document.createElement('span');
     currCandidatePercentageSpan.className = 'candidatePercentage';
-    currCandidatePercentageSpan.textContent = ` (${String(currCandidatePercentage)
-      .replace('.', ',')}%)`;
+    // eslint-disable-next-line max-len
+    currCandidatePercentageSpan.textContent = ` (${String(currCandidatePercentage).replace('.', ',')}%)`;
     currCandidateVotes.appendChild(document.createElement('br'));
     currCandidateVotes.appendChild(currCandidatePercentageSpan);
 
@@ -473,12 +476,12 @@ async function parseDataObject(data) {
     obj.candidates.push({});
     obj.candidates[obj.candidates.length - 1].number = String(candidate.n);
     obj.candidates[obj.candidates.length - 1].name = getCandidateByNumber(
-      String(candidate.n), obj.dadosFixos);
+        String(candidate.n), obj.dadosFixos);
     obj.candidates[obj.candidates.length - 1].party = getPartyByNumber(
-      String(candidate.n), obj.dadosFixos);
+        String(candidate.n), obj.dadosFixos);
 
     obj.candidates[obj.candidates.length - 1].sqcand = getSqcandByNumber(
-      String(candidate.n), obj.dadosFixos);
+        String(candidate.n), obj.dadosFixos);
 
     // VOTOS .......
     if (String(candidate.e) == 'S') {

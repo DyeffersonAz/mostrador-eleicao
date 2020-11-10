@@ -1,7 +1,8 @@
 const express = require('express');
 const requestLimit = require('express-rate-limit');
 const fetch = require('node-fetch');
-const fs = require('fs');
+const fs = require('fs-extra');
+const path = require('path');
 const util = require('util');
 const streamPipeline = util.promisify(require('stream').pipeline);
 
@@ -51,4 +52,10 @@ app.get('/fetchImage/*', async (req, res) => {
   console.log('Enviando IMAGEM: ' + filename);
 
   res.sendFile(filename, {root: __dirname});
+});
+
+app.get('/reset', async (req, res) => {
+  const dir = path.resolve('./imagecache/');
+  console.log('DELETANDO ' + dir);
+  fs.emptyDir(dir);
 });
