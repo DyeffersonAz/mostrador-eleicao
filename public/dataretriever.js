@@ -18,10 +18,10 @@ document.onkeyup = function(e) {
   }
 };
 
-const host = 'https://resultados.tse.jus.br/publico';
-const ciclo = 'ele2020';
-const ambiente = 'simulado';
-const codigoEleicao = '8334';
+const host = 'https://resultados.tse.jus.br/';
+const ciclo = 'oficial/ele2020';
+const ambiente = 'oficial';
+const codigoEleicao = '426';
 
 /**
  * Sleeps for an specified amount of time (not executing anything).
@@ -201,12 +201,12 @@ function getCandidateByNumber(number, fixedFile) {
 }
 
 /**
- * Returns the candidate's party name.
+ * Returns the candidate's party abbr.
  * @param {Integer} number - The number of the candidate in this election.
  * @param {Object} fixedFile - The fixed file for this election.
- * @return {String} Party's name.
+ * @return {String} Party's abbr.
  */
-function getPartyByNumber(number, fixedFile) {
+function getPartyAbbrByNumber(number, fixedFile) {
   // NO AGUARDO DO TSE
   const coligacoes = fixedFile.carg.col;
   for (const col of coligacoes) {
@@ -214,6 +214,46 @@ function getPartyByNumber(number, fixedFile) {
       for (const cand of par.cand) {
         if (cand.n == number) {
           return par.sg;
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Returns the candidate's party name.
+ * @param {Integer} number - The number of the candidate in this election.
+ * @param {Object} fixedFile - The fixed file for this election.
+ * @return {String} Party's name.
+ */
+function getPartyNameByNumber(number, fixedFile) {
+  // NO AGUARDO DO TSE
+  const coligacoes = fixedFile.carg.col;
+  for (const col of coligacoes) {
+    for (const par of col.par) {
+      for (const cand of par.cand) {
+        if (cand.n == number) {
+          return par.nm;
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Gets the candidate's status with a defined value.
+ * @param {Integer} number - The number of the candidate in this election.
+ * @param {Object} fixedFile - The fixed file for this election.
+ * @return {String} - The status of the candidate.
+ */
+function getStatusByNumber(number, fixedFile) {
+  // NO AGUARDO DO TSE
+  const coligacoes = fixedFile.carg.col;
+  for (const col of coligacoes) {
+    for (const par of col.par) {
+      for (const cand of par.cand) {
+        if (cand.n == number) {
+          return cand.dvt;
         }
       }
     }

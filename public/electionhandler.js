@@ -268,12 +268,15 @@ function generateCandTable(data) {
     table.appendChild(row);
 
     const currCandidateName = document.createElement('td');
-    currCandidateName.textContent = candidate.name;
+    currCandidateName.innerHTML = candidate.name;
     row.appendChild(currCandidateName);
 
-    const partyAbbr = document.createElement('td');
-    partyAbbr.textContent = candidate.party;
-    row.appendChild(partyAbbr);
+    
+
+    const partyAbbrLine = document.createElement('td');
+    // eslint-disable-next-line max-len
+    partyAbbrLine.innerHTML = `<abbr title="${candidate.partyName}">${candidate.partyAbbr}</abbr>`;
+    row.appendChild(partyAbbrLine);
 
     const currCandidateVotes = document.createElement('td');
     currCandidateVotes.textContent = numberWithPeriods(candidate.votes);
@@ -285,12 +288,12 @@ function generateCandTable(data) {
       })
     ).toFixed(2);
 
-    if (currCandidatePercentage == NaN) {
+    if (currCandidatePercentage == 'NaN') {
       currCandidatePercentage = 0;
     }
 
     const currCandidatePercentageSpan = document.createElement('span');
-    currCandidatePercentageSpan.className = 'candidatePercentage';
+    currCandidatePercentageSpan.className = 'small';
     // eslint-disable-next-line max-len
     currCandidatePercentageSpan.textContent = ` (${String(currCandidatePercentage).replace('.', ',')}%)`;
     currCandidateVotes.appendChild(document.createElement('br'));
@@ -298,6 +301,19 @@ function generateCandTable(data) {
 
     row.appendChild(currCandidateVotes);
     table.appendChild(row);
+
+    if (candidate.status != 'Válido' &&
+    candidate.status != 'Válido (legenda)') {
+      currCandidateName.style.backgroundColor = 'rgba(255, 250, 184, 1)';
+      partyAbbrLine.style.backgroundColor = 'rgba(255, 250, 184, 1)';
+      currCandidateVotes.style.backgroundColor = 'rgba(255, 250, 184, 1)';
+      const currCandidateStatusSpan = document.createElement('span');
+      currCandidateStatusSpan.className = 'small';
+      // eslint-disable-next-line max-len
+      currCandidateStatusSpan.textContent = candidate.status;
+      currCandidateName.appendChild(document.createElement('br'));
+      currCandidateName.appendChild(currCandidateStatusSpan);
+    }
 
     const isCurrCandidateElected = document.createElement('td');
 
@@ -477,10 +493,17 @@ async function parseDataObject(data) {
     obj.candidates[obj.candidates.length - 1].number = String(candidate.n);
     obj.candidates[obj.candidates.length - 1].name = getCandidateByNumber(
         String(candidate.n), obj.dadosFixos);
-    obj.candidates[obj.candidates.length - 1].party = getPartyByNumber(
+    obj.candidates[obj.candidates.length - 1].partyAbbr = getPartyAbbrByNumber(
         String(candidate.n), obj.dadosFixos);
 
+    obj.candidates[obj.candidates.length - 1].partyName = getPartyNameByNumber(
+        String(candidate.n), obj.dadosFixos);
+
+
     obj.candidates[obj.candidates.length - 1].sqcand = getSqcandByNumber(
+        String(candidate.n), obj.dadosFixos);
+
+    obj.candidates[obj.candidates.length - 1].status = getStatusByNumber(
         String(candidate.n), obj.dadosFixos);
 
     // VOTOS .......

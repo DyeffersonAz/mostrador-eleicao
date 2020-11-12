@@ -1,34 +1,29 @@
 /* eslint-disable no-unused-vars */
 // Data ====
 const cities = [
-  // "Bom Jesus do Itabapoana",
-  // "Italva",
-  // "Itaperuna",
-  // "Laje do Muriaé",
-  // "Natividade",
-  // "Porciúncula",
-  // "Varre-Sai",
-  // "Aperibé",
-  // "Cambuci",
-  // "Itaocara",
-  // "Miracema",
-  // "Santo Antônio de Pádua",
-  // "São José de Ubá",
-  // "Rio de Janeiro",
-  // "São Paulo",
-  // "Nova Friburgo",
-  // "Cabo Frio",
-  // "Rio das Ostras",
-  {name: 'Dourados', uf: 'ms'},
-  {name: 'Três Lagoas', uf: 'ms'},
-  {name: 'Campo Grande', uf: 'ms'},
-  {name: 'Porto Velho', uf: 'ro'},
-  {name: 'São Luiz', uf: 'rr'},
-  {name: 'Taquarussu', uf: 'ms'},
-  {name: 'Belém', uf: 'pa'},
+  {name: 'Bom Jesus do Itabapoana', uf: 'rj'},
+  {name: 'Italva', uf: 'rj'},
+  {name: 'Itaperuna', uf: 'rj'},
+  {name: 'Laje do Muriaé', uf: 'rj'},
+  {name: 'Natividade', uf: 'rj'},
+  {name: 'Porciúncula', uf: 'rj'},
+  {name: 'Varre-Sai', uf: 'rj'},
+  {name: 'Aperibé', uf: 'rj'},
+  {name: 'Cambuci', uf: 'rj'},
   {name: 'Itaocara', uf: 'rj'},
+  {name: 'Miracema', uf: 'rj'},
+  {name: 'Santo Antônio de Pádua', uf: 'rj'},
+  {name: 'São José de Ubá', uf: 'rj'},
   {name: 'Rio de Janeiro', uf: 'rj'},
-].sort();
+  {name: 'São Paulo', uf: 'sp'},
+  {name: 'Nova Friburgo', uf: 'rj'},
+  {name: 'Cabo Frio', uf: 'rj'},
+  {name: 'Rio das Ostras', uf: 'rj'},
+].sort((a, b) => {
+  const textA = a.name.toUpperCase();
+  const textB = b.name.toUpperCase();
+  return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+});
 
 const cityDOM = document.querySelector('#city');
 const roleDOM = document.querySelector('#role');
@@ -97,4 +92,4 @@ askNotificationPermission();
 
 getFiles();
 
-setInterval(getFiles, 30000);
+setInterval(getFiles, 60000);
