@@ -4,6 +4,7 @@ body {
     background-attachment: fixed;
     background-repeat: no-repeat;
     font-family: "Work Sans", sans-serif;
+    font-size: large;
 }
 
 form {
@@ -15,7 +16,7 @@ form {
 
 #graphs {
     display: grid;
-    background-color: rgba(250, 250, 250, 0.9);
+    background-color: rgba(250, 250, 250, 0.75);
     border-radius: 5px;
     margin: 1.7em;
     padding: 1em;
@@ -48,9 +49,10 @@ form {
 }
 
 .candidatePicture:hover {
-    height: 200px;
-    margin-left: 20px;
-    transform: scale(1.1);
+    height: 250px;
+    margin-right: 100%;
+    /* transform: scale(1.1); */
+    transform: translateZ();
 }
 
 table {
@@ -61,8 +63,8 @@ table {
 table tr td {
     border-left: 2px solid gray;
     border-right: 2px solid gray;
-    padding-right: 0.4em;
-    padding-left: 0.4em;
+    padding-right: 0.2em;
+    padding-left: 0.2em;
     border: 0.5px solid gray;
     background-color: rgb(250, 250, 250);
     line-height: 0.92rem;
@@ -121,10 +123,15 @@ canvas#urnasApuradas {
         background-attachment: fixed;
     }
 
+    table {
+        left: 50%;
+    }
+
     #graphs {
         display: flex;
         flex-direction: column;
         justify-content: center;
+        align-items: center;
         margin: 0;
         padding-top: 2em;
         padding-bottom: 2em;
